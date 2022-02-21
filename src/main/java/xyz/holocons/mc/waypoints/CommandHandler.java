@@ -87,7 +87,7 @@ public class CommandHandler implements TabExecutor {
                             yield List.of("addpoint", "create", "removepoint", "setcamp", "sethome", "teleport");
                         }
                         case 1 -> {
-                            if (args[1].equalsIgnoreCase("teleport")) {
+                            if (args[0].equalsIgnoreCase("teleport")) {
                                 final var traveler = travelerManager.getOrCreateTraveler(player);
                                 Predicate<Waypoint> hasWaypoint = waypoint -> traveler.hasWaypoint(waypoint);
                                 final var waypoints = waypointManager.getNamedWaypoints().filter(hasWaypoint);
