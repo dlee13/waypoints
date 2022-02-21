@@ -133,11 +133,13 @@ public class GsonReader extends JsonReader {
                 continue;
             }
 
-            beginArray();
-            var mostSigBits = nextLong();
-            var leastSigBits = nextLong();
-            endArray();
-            list.add(new UUID(mostSigBits, leastSigBits));
+            UUID uniqueId;
+            try {
+                uniqueId = UUID.fromString(nextString());
+            } catch (IllegalArgumentException e) {
+                throw new IOException(e);
+            }
+            list.add(uniqueId);
         }
         endArray();
 

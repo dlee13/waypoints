@@ -88,15 +88,12 @@ public class GsonWriter extends JsonWriter {
         }
 
         beginArray();
-        for (var uuid : value) {
-            if (uuid == null) {
+        for (var uniqueId : value) {
+            if (uniqueId == null) {
                 continue;
             }
 
-            beginArray();
-            value(uuid.getMostSignificantBits());
-            value(uuid.getLeastSignificantBits());
-            endArray();
+            value(uniqueId.toString());
         }
         endArray();
     }
