@@ -83,10 +83,10 @@ public class CommandHandler implements TabExecutor {
             return switch (command.getName().toUpperCase()) {
                 case "WAYPOINTS" -> {
                     yield switch (args.length) {
-                        case 0 -> {
+                        case 1 -> {
                             yield List.of("addpoint", "create", "removepoint", "setcamp", "sethome", "teleport");
                         }
-                        case 1 -> {
+                        case 2 -> {
                             if (args[0].equalsIgnoreCase("teleport")) {
                                 final var traveler = travelerManager.getOrCreateTraveler(player);
                                 Predicate<Waypoint> hasWaypoint = waypoint -> traveler.hasWaypoint(waypoint);
@@ -108,7 +108,7 @@ public class CommandHandler implements TabExecutor {
                 }
                 case "EDITWAYPOINTS" -> {
                     yield switch (args.length) {
-                        case 0 -> {
+                        case 1 -> {
                             yield List.of("activate", "delete", "menu");
                         }
                         default -> List.of();
