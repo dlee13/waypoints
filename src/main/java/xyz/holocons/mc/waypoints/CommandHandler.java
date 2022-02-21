@@ -1,5 +1,6 @@
 package xyz.holocons.mc.waypoints;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -45,7 +46,7 @@ public class CommandHandler implements TabExecutor {
                             if (args.length == 1) {
                                 showTeleportMenu(player);
                             } else {
-                                teleport(player, args[1]);
+                                teleport(player, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
                             }
                         }
                         default -> {
@@ -148,7 +149,7 @@ public class CommandHandler implements TabExecutor {
                 player.sendMessage(Component.text("You don't have a camp!"));
             }
         } else {
-            Predicate<Waypoint> matchesName = waypoint -> waypoint.getName() == destination;
+            Predicate<Waypoint> matchesName = waypoint -> waypoint.getName().matches(destination);
             final var waypoint = waypointManager.getNamedWaypoints().filter(matchesName).findAny().orElse(null);
             location = traveler.hasWaypoint(waypoint) ? waypoint.getLocation() : null;
         }
