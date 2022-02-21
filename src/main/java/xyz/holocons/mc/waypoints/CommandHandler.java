@@ -149,7 +149,7 @@ public class CommandHandler implements TabExecutor {
             }
         } else {
             Predicate<Waypoint> matchesName = waypoint -> waypoint.getName() == destination;
-            final var waypoint = waypointManager.getNamedWaypoints().filter(matchesName).findAny().get();
+            final var waypoint = waypointManager.getNamedWaypoints().filter(matchesName).findAny().orElse(null);
             location = traveler.hasWaypoint(waypoint) ? waypoint.getLocation() : null;
         }
         if (location == null) {
