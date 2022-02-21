@@ -20,8 +20,9 @@ public class HologramManager {
 
         private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
+        @SuppressWarnings("deprecation")
         public FakeEntity() {
-            this(RANDOM.nextInt() | 0xFFFF, new UUID(RANDOM.nextLong(), RANDOM.nextLong()));
+            this(Bukkit.getUnsafe().nextEntityId(), new UUID(RANDOM.nextLong(), RANDOM.nextLong()));
         }
     }
 
