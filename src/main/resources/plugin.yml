@@ -1,0 +1,23 @@
+main: ${main}
+name: ${name}
+version: ${version}
+description: ${description}
+api-version: ${apiVersion}
+authors: ${authors}
+website: ${website}
+depend: ${depend}
+prefix: ${prefix}
+
+commands:
+  waypoints:
+    usage: /waypoints [addpoint|create|removepoint|setcamp|sethome|teleport]
+    permission: waypoints.player
+  editwaypoints:
+    usage: /editwaypoints [activate|delete|menu]
+    permission: waypoints.staff
+
+permissions:
+  waypoints.player:
+    default: true
+  waypoints.staff:
+    default: op

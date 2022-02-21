@@ -1,0 +1,16 @@
+traveler:
+  regen-charge-time: 24000
+  teleport-wait-time: 140
+  max-charges: 9
+  max-tokens: 1
+waypoint:
+  token-requirement: 7
+world:
+  home:
+    - world
+    - world_nether
+    - world_the_end
+  camp:
+    - world
+    - world_nether
+    - world_the_end
