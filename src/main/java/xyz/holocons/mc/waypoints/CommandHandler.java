@@ -90,8 +90,7 @@ public class CommandHandler implements TabExecutor {
                         case 2 -> {
                             if (args[0].equalsIgnoreCase("teleport")) {
                                 final var traveler = travelerManager.getOrCreateTraveler(player);
-                                Predicate<Waypoint> hasWaypoint = waypoint -> traveler.hasWaypoint(waypoint);
-                                final var waypoints = waypointManager.getNamedWaypoints().filter(hasWaypoint);
+                                final var waypoints = waypointManager.getNamedWaypoints().filter(traveler::hasWaypoint);
                                 var names = waypoints.map(Waypoint::getName);
                                 if (traveler.getCamp() != null) {
                                     names = Stream.concat(names, Stream.of("camp"));
