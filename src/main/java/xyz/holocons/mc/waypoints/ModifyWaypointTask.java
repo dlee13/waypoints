@@ -26,6 +26,7 @@ public class ModifyWaypointTask extends BukkitRunnable {
     private final int expiration;
 
     public ModifyWaypointTask(final PaperPlugin plugin, final Player player, final Mode mode) {
+        plugin.getTravelerManager().registerTask(player, this);
         final var period = 40;
         runTaskTimer(plugin, 0, period);
         this.player = player;

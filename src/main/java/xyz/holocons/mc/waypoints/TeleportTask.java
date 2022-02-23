@@ -19,6 +19,7 @@ public class TeleportTask extends BukkitRunnable {
     final NamespacedKey key;
 
     public TeleportTask(final PaperPlugin plugin, final Player player, final Location destination) {
+        plugin.getTravelerManager().registerTask(player, this);
         final var teleportWaitTime = plugin.getTravelerTeleportWaitTime();
         final var period = teleportWaitTime / 20;
         final var taskId = runTaskTimer(plugin, period, period).getTaskId();
@@ -28,21 +29,10 @@ public class TeleportTask extends BukkitRunnable {
         this.initialHealth = player.getHealth();
         this.initialPosition = player.getLocation().toVector();
         this.key = new NamespacedKey(plugin, Integer.toString(taskId));
-        final var bossBar = Bukkit.createBossBar(
-            key,
-            "Teleporting...",
-            BarColor.GREEN,
-            BarStyle.SEGMENTED_20
-        );
+        final var bossBar = Bukkit.createBossBar(key, "Teleporting...", BarColor.GREEN, BarStyle.SEGMENTED_20);
         bossBar.setProgress(0.0);
         bossBar.addPlayer(player);
-        new BukkitRunnable() {
-
-            @Override
-            public void run() {
-                removeBossBar(key);
-            }
-        }.runTaskLater(plugin, teleportWaitTime + 2);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> removeBossBar(key), teleportWaitTime + 2);
     }
 
     @Override

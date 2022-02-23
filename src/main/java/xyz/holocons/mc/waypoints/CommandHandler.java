@@ -37,7 +37,7 @@ public class CommandHandler implements TabExecutor {
                     final var subcommand = args[0].toUpperCase();
                     switch (subcommand) {
                         case "ADDPOINT", "CREATE", "REMOVEPOINT", "SETCAMP", "SETHOME" -> {
-                            modifyWaypoint(player, ModifyWaypointTask.Mode.valueOf(subcommand));
+                            new ModifyWaypointTask(plugin, player, ModifyWaypointTask.Mode.valueOf(subcommand));
                         }
                         case "CANCEL" -> {
                             travelerManager.unregisterTask(player);
@@ -61,7 +61,7 @@ public class CommandHandler implements TabExecutor {
                     final var subcommand = args[0].toUpperCase();
                     switch (subcommand) {
                         case "ACTIVATE", "DELETE" -> {
-                            modifyWaypoint(player, ModifyWaypointTask.Mode.valueOf(subcommand));
+                            new ModifyWaypointTask(plugin, player, ModifyWaypointTask.Mode.valueOf(subcommand));
                         }
                         case "MENU" -> {
                             showEditMenu(player);
@@ -125,11 +125,6 @@ public class CommandHandler implements TabExecutor {
 
     }
 
-    private void modifyWaypoint(Player player, ModifyWaypointTask.Mode mode) {
-        final var task = new ModifyWaypointTask(plugin, player, mode);
-        travelerManager.registerTask(player, task);
-    }
-
     private void showTeleportMenu(Player player) {
 
     }
@@ -156,7 +151,6 @@ public class CommandHandler implements TabExecutor {
             showTeleportMenu(player);
             return;
         }
-        final var task = new TeleportTask(plugin, player, location);
-        travelerManager.registerTask(player, task);
+        new TeleportTask(plugin, player, location);
     }
 }
