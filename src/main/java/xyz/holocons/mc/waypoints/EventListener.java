@@ -1,5 +1,6 @@
 package xyz.holocons.mc.waypoints;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -79,9 +81,16 @@ public final class EventListener implements Listener {
             && plugin.getWorldHome().contains(blockPlaced.getWorld().getName());
     }
 
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
     public void onInventoryClick(InventoryClickEvent event) {
-        // menu
+        if (!(event.getInventory().getHolder() instanceof Menu menu)) {
+            return;
+        }
+        event.setCancelled(true);
+        if (!event.getAction().equals(InventoryAction.PICKUP_ALL) || !(event.getClickedInventory().getHolder() instanceof Menu)) {
+            return;
+        }
+       Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> menu.handleClick(event.getCurrentItem()));
     }
 
     @EventHandler

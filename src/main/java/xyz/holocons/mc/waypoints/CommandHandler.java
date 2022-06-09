@@ -19,7 +19,7 @@ public class CommandHandler implements TabExecutor {
     private final TravelerManager travelerManager;
     private final WaypointManager waypointManager;
 
-    public CommandHandler(PaperPlugin plugin) {
+    public CommandHandler(final PaperPlugin plugin) {
         this.plugin = plugin;
         this.travelerManager = plugin.getTravelerManager();
         this.waypointManager = plugin.getWaypointManager();
@@ -31,7 +31,7 @@ public class CommandHandler implements TabExecutor {
             switch (command.getName().toUpperCase()) {
                 case "WAYPOINTS" -> {
                     if (args.length == 0) {
-                        showTeleportMenu(player);
+                        new Menu(plugin, player, Menu.Type.Teleport);
                         return true;
                     }
                     final var subcommand = args[0].toUpperCase();
@@ -44,7 +44,7 @@ public class CommandHandler implements TabExecutor {
                         }
                         case "TELEPORT" -> {
                             if (args.length == 1) {
-                                showTeleportMenu(player);
+                                new Menu(plugin, player, Menu.Type.Teleport);
                             } else {
                                 teleport(player, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
                             }
@@ -64,7 +64,7 @@ public class CommandHandler implements TabExecutor {
                             new ModifyWaypointTask(plugin, player, ModifyWaypointTask.Mode.valueOf(subcommand));
                         }
                         case "MENU" -> {
-                            showEditMenu(player);
+                            new Menu(plugin, player, Menu.Type.Edit);
                         }
                         default -> {
                             return false;
@@ -121,14 +121,6 @@ public class CommandHandler implements TabExecutor {
         }
     }
 
-    private void showEditMenu(Player player) {
-
-    }
-
-    private void showTeleportMenu(Player player) {
-
-    }
-
     private void teleport(Player player, String destination) {
         final var traveler = travelerManager.getOrCreateTraveler(player);
         Location location;
@@ -148,7 +140,7 @@ public class CommandHandler implements TabExecutor {
             location = traveler.hasWaypoint(waypoint) ? waypoint.getLocation() : null;
         }
         if (location == null) {
-            showTeleportMenu(player);
+            new Menu(plugin, player, Menu.Type.Teleport);
             return;
         }
         new TeleportTask(plugin, player, location);
