@@ -178,7 +178,7 @@ public final class EventListener implements Listener {
                 waypoint.activate();
                 hologramManager.updateTrackedPlayers(waypoint, player);
             }
-            case ADDPOINT -> {
+            case ADDTOKEN -> {
                 if (waypoint.isActive()) {
                     return;
                 }
@@ -219,7 +219,7 @@ public final class EventListener implements Listener {
                 }
                 hologramManager.remove(waypoint);
             }
-            case REMOVEPOINT -> {
+            case REMOVETOKEN -> {
                 if (waypoint.isActive()) {
                     return;
                 }

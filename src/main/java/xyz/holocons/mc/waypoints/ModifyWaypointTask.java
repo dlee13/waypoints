@@ -13,10 +13,10 @@ public class ModifyWaypointTask extends BukkitRunnable {
 
     public enum Mode {
         ACTIVATE,
-        ADDPOINT,
+        ADDTOKEN,
         CREATE,
         DELETE,
-        REMOVEPOINT,
+        REMOVETOKEN,
         SETCAMP,
         SETHOME,
     }

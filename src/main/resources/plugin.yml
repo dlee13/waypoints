@@ -10,7 +10,7 @@ prefix: ${prefix}
 
 commands:
   waypoints:
-    usage: /waypoints [addpoint | create | removepoint | setcamp | sethome | teleport]
+    usage: /waypoints [addtoken | create | removetoken | setcamp | sethome | teleport]
     permission: waypoints.player
   editwaypoints:
     usage: /editwaypoints [activate | delete | menu]

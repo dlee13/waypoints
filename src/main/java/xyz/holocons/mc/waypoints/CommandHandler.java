@@ -36,7 +36,7 @@ public class CommandHandler implements TabExecutor {
                     }
                     final var subcommand = args[0].toUpperCase();
                     switch (subcommand) {
-                        case "ADDPOINT", "CREATE", "REMOVEPOINT", "SETCAMP", "SETHOME" -> {
+                        case "ADDTOKEN", "CREATE", "REMOVETOKEN", "SETCAMP", "SETHOME" -> {
                             new ModifyWaypointTask(plugin, player, ModifyWaypointTask.Mode.valueOf(subcommand));
                         }
                         case "CANCEL" -> {
@@ -85,7 +85,7 @@ public class CommandHandler implements TabExecutor {
                 case "WAYPOINTS" -> {
                     yield switch (args.length) {
                         case 1 -> {
-                            yield List.of("addpoint", "create", "removepoint", "setcamp", "sethome", "teleport");
+                            yield List.of("addtoken", "create", "removetoken", "setcamp", "sethome", "teleport");
                         }
                         case 2 -> {
                             if (args[0].equalsIgnoreCase("teleport")) {
