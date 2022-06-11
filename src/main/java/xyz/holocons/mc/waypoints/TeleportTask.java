@@ -32,7 +32,12 @@ public class TeleportTask extends BukkitRunnable {
         final var bossBar = Bukkit.createBossBar(key, "Teleporting...", BarColor.GREEN, BarStyle.SEGMENTED_20);
         bossBar.setProgress(0.0);
         bossBar.addPlayer(player);
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> removeBossBar(key), teleportWaitTime + 2);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
+            removeBossBar(key);
+            if (player.isOnline()) {
+                traveler.startRegenCharge(plugin);
+            }
+        }, teleportWaitTime + 2);
     }
 
     @Override
@@ -54,9 +59,14 @@ public class TeleportTask extends BukkitRunnable {
         bossBar.setProgress(newProgress);
         if (newProgress == 1.0) {
             cancel();
-            traveler.setCharges(traveler.getCharges() - 1);
-            destination.setDirection(player.getLocation().getDirection());
-            player.teleport(destination);
+            final var charges = traveler.getCharges();
+            if (charges > 0) {
+                traveler.setCharges(charges - 1);
+                destination.setDirection(player.getLocation().getDirection());
+                player.teleport(destination);
+            } else {
+                player.sendMessage("Teleportation failed...");
+            }
         }
     }
 
