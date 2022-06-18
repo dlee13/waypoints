@@ -1,5 +1,7 @@
 package xyz.holocons.mc.waypoints;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -73,7 +75,31 @@ public class CommandHandler implements TabExecutor {
                 }
             }
         } else {
-            // console command (givepoint, purge, reload)
+            if (args.length == 0) {
+                return false;
+            }
+            final var subcommand = args[0].toUpperCase();
+            switch (subcommand) {
+                case "LOAD" -> {
+                    plugin.reloadConfig();
+                    try {
+                        travelerManager.loadTravelers(plugin);
+                        waypointManager.loadWaypoints(plugin);
+                    } catch (IOException e) {
+                        travelerManager.clearTravelers();
+                        waypointManager.clearWaypoints();
+                        throw new UncheckedIOException(e);
+                    }
+                }
+                case "SAVE" -> {
+                    try {
+                        waypointManager.saveWaypoints(plugin);
+                        travelerManager.saveTravelers(plugin);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                }
+            }
         }
         return true;
     }
