@@ -90,6 +90,7 @@ public class CommandHandler implements TabExecutor {
                         waypointManager.clearWaypoints();
                         throw new UncheckedIOException(e);
                     }
+                    plugin.getLogger().info("Reloaded");
                 }
                 case "SAVE" -> {
                     try {
@@ -98,6 +99,7 @@ public class CommandHandler implements TabExecutor {
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
                     }
+                    plugin.getLogger().info("Saved");
                 }
             }
         }
