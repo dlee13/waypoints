@@ -133,11 +133,13 @@ public final class EventListener implements Listener {
                 case SETCAMP -> {
                     if (plugin.getWorldCamp().contains(clickedBlock.getWorld().getName())) {
                         travelerManager.getOrCreateTraveler(player).setCamp(clickedBlock.getLocation());
+                        player.sendMessage(Component.text("You assigned your camp!", NamedTextColor.GREEN));
                     }
                 }
                 case SETHOME -> {
                     if (plugin.getWorldHome().contains(clickedBlock.getWorld().getName())) {
                         travelerManager.getOrCreateTraveler(player).setHome(clickedBlock.getLocation());
+                        player.sendMessage(Component.text("You assigned your home!", NamedTextColor.GREEN));
                     }
                 }
                 default -> {
