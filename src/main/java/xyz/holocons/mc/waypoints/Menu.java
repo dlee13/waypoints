@@ -37,7 +37,7 @@ public class Menu implements InventoryHolder {
 
         switch (type) {
             case Edit -> {
-
+                createEditPage(0);
             }
             case Teleport -> {
                 createTeleportPage(0);
@@ -51,6 +51,38 @@ public class Menu implements InventoryHolder {
     @Override
     public Inventory getInventory() {
         return inventory;
+    }
+
+    private void createEditPage(int page) {
+        final var waypoints = plugin.getWaypointManager()
+                .getAllWaypoints()
+                .sorted(Comparator.comparing(Waypoint::getName))
+                .toList();
+        final var pageCount = Math.max(waypoints.size() - 1, 0) / 48 + 1;
+        final var currentPage = page % pageCount;
+        final var fromIndex = currentPage * 48;
+        final var toIndex = Math.min(fromIndex + 48, waypoints.size());
+
+        inventory.clear();
+        int slot = 0;
+        for (final var waypoint : waypoints.subList(fromIndex, toIndex)) {
+            final var item = waypoint.getDisplayItem();
+            final var location = waypoint.getLocation();
+            final var meta = item.getItemMeta();
+            meta.getPersistentDataContainer().set(locationKey, DataType.LOCATION, location);
+            item.setItemMeta(meta);
+            inventory.setItem(slot, item);
+            slot++;
+            if ((slot + 1) % 9 == 0) {
+                slot++;
+            }
+        }
+        final var item = new ItemStack(Material.ENDER_PEARL);
+        final var meta = item.getItemMeta();
+        meta.displayName(Component.text(String.format("Page %d/%d", currentPage + 1, pageCount)));
+        meta.getPersistentDataContainer().set(pageKey, PersistentDataType.INTEGER, currentPage);
+        item.setItemMeta(meta);
+        inventory.setItem(53, item);
     }
 
     private void createTeleportPage(int page) {
@@ -111,7 +143,16 @@ public class Menu implements InventoryHolder {
     public void handleClick(ItemStack clickedItem) {
         switch (type) {
             case Edit -> {
-
+                final var location = clickedItem.getItemMeta().getPersistentDataContainer()
+                        .get(locationKey, DataType.LOCATION);
+                if (location == null) {
+                    final var currentPage = inventory.getItem(53).getItemMeta().getPersistentDataContainer()
+                            .get(pageKey, PersistentDataType.INTEGER);
+                    createEditPage(currentPage + 1);
+                    return;
+                }
+                player.teleport(location);
+                inventory.close();
             }
             case Teleport -> {
                 final var location = clickedItem.getItemMeta().getPersistentDataContainer()

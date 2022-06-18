@@ -104,8 +104,12 @@ public class WaypointManager {
         return isWaypoint(block.getLocation());
     }
 
+    public Stream<Waypoint> getAllWaypoints() {
+        return waypoints.values().stream();
+    }
+
     public Stream<Waypoint> getActiveWaypoints() {
-        return waypoints.values().stream().filter(Waypoint::isActive);
+        return getAllWaypoints().filter(Waypoint::isActive);
     }
 
     public Stream<Waypoint> getNamedWaypoints() {

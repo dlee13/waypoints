@@ -58,7 +58,8 @@ public class CommandHandler implements TabExecutor {
                 }
                 case "EDITWAYPOINTS" -> {
                     if (args.length == 0) {
-                        return false;
+                        new Menu(plugin, player, Menu.Type.Edit);
+                        return true;
                     }
                     final var subcommand = args[0].toUpperCase();
                     switch (subcommand) {
