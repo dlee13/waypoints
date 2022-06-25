@@ -15,6 +15,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 
 import io.papermc.paper.event.packet.PlayerChunkLoadEvent;
@@ -260,5 +261,10 @@ public final class EventListener implements Listener {
         travelerManager.getOrCreateTraveler(player).stopRegenCharge();
         travelerManager.unregisterTask(player);
         hologramManager.remove(player);
+    }
+
+    @EventHandler
+    public void onServerLoad(ServerLoadEvent event) {
+        plugin.loadData();
     }
 }

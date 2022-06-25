@@ -1,7 +1,5 @@
 package xyz.holocons.mc.waypoints;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -83,24 +81,10 @@ public class CommandHandler implements TabExecutor {
             switch (subcommand) {
                 case "LOAD" -> {
                     plugin.reloadConfig();
-                    try {
-                        travelerManager.loadTravelers(plugin);
-                        waypointManager.loadWaypoints(plugin);
-                    } catch (IOException e) {
-                        travelerManager.clearTravelers();
-                        waypointManager.clearWaypoints();
-                        throw new UncheckedIOException(e);
-                    }
-                    plugin.getLogger().info("Reloaded");
+                    plugin.loadData();
                 }
                 case "SAVE" -> {
-                    try {
-                        waypointManager.saveWaypoints(plugin);
-                        travelerManager.saveTravelers(plugin);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    plugin.getLogger().info("Saved");
+                    plugin.saveData();
                 }
             }
         }

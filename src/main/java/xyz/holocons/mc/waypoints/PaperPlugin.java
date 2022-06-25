@@ -29,14 +29,6 @@ public final class PaperPlugin extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        try {
-            travelerManager.loadTravelers(this);
-            waypointManager.loadWaypoints(this);
-        } catch (IOException e) {
-            travelerManager.clearTravelers();
-            waypointManager.clearWaypoints();
-            throw new UncheckedIOException(e);
-        }
         final var commandHandler = new CommandHandler(this);
         getCommand("waypoints").setExecutor(commandHandler);
         getCommand("editwaypoints").setExecutor(commandHandler);
@@ -46,12 +38,29 @@ public final class PaperPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        saveData();
+    }
+
+    public void loadData() {
+        try {
+            travelerManager.loadTravelers(this);
+            waypointManager.loadWaypoints(this);
+        } catch (IOException e) {
+            travelerManager.clearTravelers();
+            waypointManager.clearWaypoints();
+            throw new UncheckedIOException(e);
+        }
+        getLogger().info("Loaded [" + TravelerManager.FILENAME + ", " + WaypointManager.FILENAME + "]");
+    }
+
+    public void saveData() {
         try {
             waypointManager.saveWaypoints(this);
             travelerManager.saveTravelers(this);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+        getLogger().info("Saved [" + TravelerManager.FILENAME + ", " + WaypointManager.FILENAME + "]");
     }
 
     public int getTravelerRegenChargeTime() {
