@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HexFormat;
 import java.util.UUID;
@@ -85,20 +86,19 @@ public class GsonReader extends JsonReader {
 
         var location = nextString().split(",");
         var world = Bukkit.getWorld(location[0]);
-        if (world != null) {
-            double x, y, z;
-            try {
-                x = Double.parseDouble(location[1]);
-                y = Double.parseDouble(location[2]);
-                z = Double.parseDouble(location[3]);
-            } catch (NullPointerException | NumberFormatException e) {
-                throw new IOException(e);
+        double x, y, z;
+        try {
+            if (world == null) {
+                throw new NullPointerException();
             }
-
-            return new Location(world, x, y, z);
-        } else {
-            return null;
+            x = Double.parseDouble(location[1]);
+            y = Double.parseDouble(location[2]);
+            z = Double.parseDouble(location[3]);
+        } catch (NullPointerException | NumberFormatException e) {
+            throw new IOException("Unrecognized Location: " + Arrays.toString(location));
         }
+
+        return new Location(world, x, y, z);
     }
 
     public BitSet nextBitSet() throws IOException {
@@ -112,7 +112,7 @@ public class GsonReader extends JsonReader {
         try {
             bytes = HexFormat.of().parseHex(hexString);
         } catch (IllegalArgumentException e) {
-            throw new IOException(e);
+            throw new IOException("Unrecognized BitSet: " + hexString);
         }
 
         return BitSet.valueOf(bytes);
@@ -133,11 +133,12 @@ public class GsonReader extends JsonReader {
                 continue;
             }
 
+            var uniqueIdString = nextString();
             UUID uniqueId;
             try {
-                uniqueId = UUID.fromString(nextString());
+                uniqueId = UUID.fromString(uniqueIdString);
             } catch (IllegalArgumentException e) {
-                throw new IOException(e);
+                throw new IOException("Unrecognized UUID: " + uniqueIdString);
             }
             list.add(uniqueId);
         }

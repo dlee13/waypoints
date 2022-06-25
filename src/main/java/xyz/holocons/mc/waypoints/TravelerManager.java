@@ -35,11 +35,12 @@ public class TravelerManager {
         final var reader = new GsonReader(plugin.getGson(), file);
         reader.beginObject();
         while (reader.hasNext()) {
+            var uniqueIdString = reader.nextName();
             UUID uniqueId;
             try {
-                uniqueId = UUID.fromString(reader.nextName());
+                uniqueId = UUID.fromString(uniqueIdString);
             } catch (IllegalArgumentException e) {
-                throw new IOException(e);
+                throw new IOException("Unrecognized UUID: " + uniqueIdString);
             }
             var traveler = reader.nextTraveler();
             travelers.put(uniqueId, traveler);
