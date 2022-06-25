@@ -79,6 +79,9 @@ public class CommandHandler implements TabExecutor {
             }
             final var subcommand = args[0].toUpperCase();
             switch (subcommand) {
+                case "BACKUP" -> {
+                    plugin.backupData();
+                }
                 case "LOAD" -> {
                     plugin.reloadConfig();
                     plugin.loadData();

@@ -1,7 +1,9 @@
 package xyz.holocons.mc.waypoints;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.time.Instant;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -41,6 +43,20 @@ public final class PaperPlugin extends JavaPlugin {
         saveData();
     }
 
+    public void backupData() {
+        final var zipFile = new File(getDataFolder(), "backup-" + Instant.now().toString() + ".zip");
+        final var travelerFile = new File(getDataFolder(), TravelerManager.FILENAME);
+        final var waypointFile = new File(getDataFolder(), WaypointManager.FILENAME);
+        try {
+            final var writer = new ZipWriter(zipFile);
+            writer.addFile(travelerFile, waypointFile);
+            writer.close();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        getLogger().info("Backup written");
+    }
+
     public void loadData() {
         try {
             travelerManager.loadTravelers(this);
@@ -50,7 +66,7 @@ public final class PaperPlugin extends JavaPlugin {
             waypointManager.clearWaypoints();
             throw new UncheckedIOException(e);
         }
-        getLogger().info("Loaded [" + TravelerManager.FILENAME + ", " + WaypointManager.FILENAME + "]");
+        getLogger().info("Loaded");
     }
 
     public void saveData() {
@@ -60,7 +76,7 @@ public final class PaperPlugin extends JavaPlugin {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        getLogger().info("Saved [" + TravelerManager.FILENAME + ", " + WaypointManager.FILENAME + "]");
+        getLogger().info("Saved");
     }
 
     public int getTravelerRegenChargeTime() {
