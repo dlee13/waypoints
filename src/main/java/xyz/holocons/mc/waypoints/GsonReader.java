@@ -56,8 +56,8 @@ public class GsonReader extends JsonReader {
             return null;
         }
 
-        int charges = 1;
-        int tokens = 1;
+        int charges = 0;
+        int tokens = 0;
         Location home = null;
         Location camp = null;
         BitSet waypoints = null;

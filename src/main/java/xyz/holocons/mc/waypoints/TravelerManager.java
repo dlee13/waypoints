@@ -80,7 +80,7 @@ public class TravelerManager {
     public Traveler getOrCreateTraveler(UUID uniqueId) {
         var traveler = travelers.get(uniqueId);
         if (traveler == null) {
-            traveler = new Traveler(1, 1, null, null, null);
+            traveler = new Traveler(0, 0, null, null, null);
             travelers.put(uniqueId, traveler);
         }
         return traveler;
