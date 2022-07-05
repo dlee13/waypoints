@@ -9,14 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class TravelerManager {
+public class TravelerMap {
 
     public static final String FILENAME = "traveler.json";
 
     private final HashMap<UUID, Traveler> travelers;
     private final HashMap<UUID, BukkitRunnable> tasks;
 
-    public TravelerManager() {
+    public TravelerMap() {
         this.travelers = new HashMap<>();
         this.tasks = new HashMap<>();
     }

@@ -15,18 +15,18 @@ public final class PaperPlugin extends JavaPlugin {
 
     private FileConfiguration config;
     private Gson gson;
-    private HologramManager hologramManager;
-    private TravelerManager travelerManager;
-    private WaypointManager waypointManager;
+    private HologramMap hologramMap;
+    private TravelerMap travelerMap;
+    private WaypointMap waypointMap;
 
     @Override
     public void onLoad() {
         saveDefaultConfig();
         config = getConfig();
         gson = new Gson();
-        hologramManager = new HologramManager();
-        travelerManager = new TravelerManager();
-        waypointManager = new WaypointManager();
+        hologramMap = new HologramMap();
+        travelerMap = new TravelerMap();
+        waypointMap = new WaypointMap();
     }
 
     @Override
@@ -45,8 +45,8 @@ public final class PaperPlugin extends JavaPlugin {
 
     public void backupData() {
         final var zipFile = new File(getDataFolder(), "backup-" + Instant.now().toString() + ".zip");
-        final var travelerFile = new File(getDataFolder(), TravelerManager.FILENAME);
-        final var waypointFile = new File(getDataFolder(), WaypointManager.FILENAME);
+        final var travelerFile = new File(getDataFolder(), TravelerMap.FILENAME);
+        final var waypointFile = new File(getDataFolder(), WaypointMap.FILENAME);
         try {
             final var writer = new ZipWriter(zipFile);
             writer.addFile(travelerFile, waypointFile);
@@ -59,11 +59,11 @@ public final class PaperPlugin extends JavaPlugin {
 
     public void loadData() {
         try {
-            travelerManager.loadTravelers(this);
-            waypointManager.loadWaypoints(this);
+            travelerMap.loadTravelers(this);
+            waypointMap.loadWaypoints(this);
         } catch (IOException e) {
-            travelerManager.clearTravelers();
-            waypointManager.clearWaypoints();
+            travelerMap.clearTravelers();
+            waypointMap.clearWaypoints();
             throw new UncheckedIOException(e);
         }
         getLogger().info("Loaded");
@@ -71,8 +71,8 @@ public final class PaperPlugin extends JavaPlugin {
 
     public void saveData() {
         try {
-            waypointManager.saveWaypoints(this);
-            travelerManager.saveTravelers(this);
+            waypointMap.saveWaypoints(this);
+            travelerMap.saveTravelers(this);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -111,15 +111,15 @@ public final class PaperPlugin extends JavaPlugin {
         return gson;
     }
 
-    public HologramManager getHologramManager() {
-        return hologramManager;
+    public HologramMap getHologramMap() {
+        return hologramMap;
     }
 
-    public TravelerManager getTravelerManager() {
-        return travelerManager;
+    public TravelerMap getTravelerMap() {
+        return travelerMap;
     }
 
-    public WaypointManager getWaypointManager() {
-        return waypointManager;
+    public WaypointMap getWaypointMap() {
+        return waypointMap;
     }
 }

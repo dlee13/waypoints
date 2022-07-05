@@ -9,9 +9,9 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 
-public class ModifyWaypointTask extends BukkitRunnable {
+public class TravelerTask extends BukkitRunnable {
 
-    public enum Mode {
+    public enum Type {
         ACTIVATE,
         ADDTOKEN,
         CREATE,
@@ -22,33 +22,33 @@ public class ModifyWaypointTask extends BukkitRunnable {
     }
 
     private final Player player;
-    private final Mode mode;
+    private final Type type;
     private final int expiration;
 
-    public ModifyWaypointTask(final PaperPlugin plugin, final Player player, final Mode mode) {
-        plugin.getTravelerManager().registerTask(player, this);
+    public TravelerTask(final PaperPlugin plugin, final Player player, final Type type) {
+        plugin.getTravelerMap().registerTask(player, this);
         final var period = 40;
         runTaskTimer(plugin, 0, period);
         this.player = player;
-        this.mode = mode;
+        this.type = type;
         this.expiration = Bukkit.getCurrentTick() + 600;
         final var messageComponent = Component.text()
             .clickEvent(ClickEvent.runCommand("/waypoints cancel"))
             .hoverEvent(HoverEvent.showText(Component.text("Click to cancel early!")))
-            .append(Component.text("You entered WAYPOINT " + mode.toString() + " mode for 30 seconds!"))
+            .append(Component.text("You entered WAYPOINT " + type.toString() + " mode for 30 seconds!"))
             .build();
         player.sendMessage(messageComponent);
     }
 
     @Override
     public void run() {
-        player.sendActionBar(Component.text("WAYPOINT " + mode.toString(), NamedTextColor.GREEN));
+        player.sendActionBar(Component.text("WAYPOINT " + type.toString(), NamedTextColor.GREEN));
         if (Bukkit.getCurrentTick() >= expiration) {
             cancel();
         }
     }
 
-    public Mode getMode() {
-        return mode;
+    public Type getType() {
+        return type;
     }
 }

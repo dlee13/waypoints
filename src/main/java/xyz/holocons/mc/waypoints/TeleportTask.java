@@ -19,12 +19,12 @@ public class TeleportTask extends BukkitRunnable {
     final NamespacedKey key;
 
     public TeleportTask(final PaperPlugin plugin, final Player player, final Location destination) {
-        plugin.getTravelerManager().registerTask(player, this);
+        plugin.getTravelerMap().registerTask(player, this);
         final var teleportWaitTime = plugin.getTravelerTeleportWaitTime();
         final var period = teleportWaitTime / 20;
         final var taskId = runTaskTimer(plugin, period, period).getTaskId();
         this.player = player;
-        this.traveler = plugin.getTravelerManager().getOrCreateTraveler(player);
+        this.traveler = plugin.getTravelerMap().getOrCreateTraveler(player);
         this.destination = toXZCenterLocation(destination);
         this.initialHealth = player.getHealth();
         this.initialPosition = player.getLocation().toVector();

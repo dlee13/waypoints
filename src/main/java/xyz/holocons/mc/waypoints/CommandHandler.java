@@ -16,13 +16,13 @@ import net.kyori.adventure.text.Component;
 public class CommandHandler implements TabExecutor {
 
     private final PaperPlugin plugin;
-    private final TravelerManager travelerManager;
-    private final WaypointManager waypointManager;
+    private final TravelerMap travelerMap;
+    private final WaypointMap waypointMap;
 
     public CommandHandler(final PaperPlugin plugin) {
         this.plugin = plugin;
-        this.travelerManager = plugin.getTravelerManager();
-        this.waypointManager = plugin.getWaypointManager();
+        this.travelerMap = plugin.getTravelerMap();
+        this.waypointMap = plugin.getWaypointMap();
     }
 
     @Override
@@ -31,20 +31,20 @@ public class CommandHandler implements TabExecutor {
             switch (command.getName().toUpperCase()) {
                 case "WAYPOINTS" -> {
                     if (args.length == 0) {
-                        new Menu(plugin, player, Menu.Type.Teleport);
+                        new Menu(plugin, player, Menu.Type.TELEPORT);
                         return true;
                     }
                     final var subcommand = args[0].toUpperCase();
                     switch (subcommand) {
                         case "ADDTOKEN", "CREATE", "REMOVETOKEN", "SETCAMP", "SETHOME" -> {
-                            new ModifyWaypointTask(plugin, player, ModifyWaypointTask.Mode.valueOf(subcommand));
+                            new TravelerTask(plugin, player, TravelerTask.Type.valueOf(subcommand));
                         }
                         case "CANCEL" -> {
-                            travelerManager.unregisterTask(player);
+                            travelerMap.unregisterTask(player);
                         }
                         case "TELEPORT" -> {
                             if (args.length == 1) {
-                                new Menu(plugin, player, Menu.Type.Teleport);
+                                new Menu(plugin, player, Menu.Type.TELEPORT);
                             } else {
                                 teleport(player, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
                             }
@@ -56,16 +56,16 @@ public class CommandHandler implements TabExecutor {
                 }
                 case "EDITWAYPOINTS" -> {
                     if (args.length == 0) {
-                        new Menu(plugin, player, Menu.Type.Edit);
+                        new Menu(plugin, player, Menu.Type.EDIT);
                         return true;
                     }
                     final var subcommand = args[0].toUpperCase();
                     switch (subcommand) {
                         case "ACTIVATE", "DELETE" -> {
-                            new ModifyWaypointTask(plugin, player, ModifyWaypointTask.Mode.valueOf(subcommand));
+                            new TravelerTask(plugin, player, TravelerTask.Type.valueOf(subcommand));
                         }
                         case "MENU" -> {
-                            new Menu(plugin, player, Menu.Type.Edit);
+                            new Menu(plugin, player, Menu.Type.EDIT);
                         }
                         default -> {
                             return false;
@@ -105,8 +105,8 @@ public class CommandHandler implements TabExecutor {
                         }
                         case 2 -> {
                             if (args[0].equalsIgnoreCase("teleport")) {
-                                final var traveler = travelerManager.getOrCreateTraveler(player);
-                                final var waypoints = waypointManager.getNamedWaypoints().filter(traveler::hasWaypoint);
+                                final var traveler = travelerMap.getOrCreateTraveler(player);
+                                final var waypoints = waypointMap.getNamedWaypoints().filter(traveler::hasWaypoint);
                                 var names = waypoints.map(Waypoint::getName);
                                 if (traveler.getCamp() != null) {
                                     names = Stream.concat(names, Stream.of("camp"));
@@ -138,7 +138,7 @@ public class CommandHandler implements TabExecutor {
     }
 
     private void teleport(Player player, String destination) {
-        final var traveler = travelerManager.getOrCreateTraveler(player);
+        final var traveler = travelerMap.getOrCreateTraveler(player);
         Location location;
         if (destination.equalsIgnoreCase("home")) {
             location = traveler.getHome();
@@ -152,11 +152,11 @@ public class CommandHandler implements TabExecutor {
             }
         } else {
             Predicate<Waypoint> matchesName = waypoint -> waypoint.getName().matches(destination);
-            final var waypoint = waypointManager.getNamedWaypoints().filter(matchesName).findAny().orElse(null);
+            final var waypoint = waypointMap.getNamedWaypoints().filter(matchesName).findAny().orElse(null);
             location = traveler.hasWaypoint(waypoint) ? waypoint.getLocation() : null;
         }
         if (location == null) {
-            new Menu(plugin, player, Menu.Type.Teleport);
+            new Menu(plugin, player, Menu.Type.TELEPORT);
             return;
         }
         new TeleportTask(plugin, player, location);

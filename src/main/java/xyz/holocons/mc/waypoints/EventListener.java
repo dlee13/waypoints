@@ -26,15 +26,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 public final class EventListener implements Listener {
 
     private final PaperPlugin plugin;
-    private final HologramManager hologramManager;
-    private final TravelerManager travelerManager;
-    private final WaypointManager waypointManager;
+    private final HologramMap hologramMap;
+    private final TravelerMap travelerMap;
+    private final WaypointMap waypointMap;
 
     public EventListener(final PaperPlugin plugin) {
         this.plugin = plugin;
-        this.hologramManager = plugin.getHologramManager();
-        this.travelerManager = plugin.getTravelerManager();
-        this.waypointManager = plugin.getWaypointManager();
+        this.hologramMap = plugin.getHologramMap();
+        this.travelerMap = plugin.getTravelerMap();
+        this.waypointMap = plugin.getWaypointMap();
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -45,12 +45,12 @@ public final class EventListener implements Listener {
 
         final var blockPlaced = event.getBlockPlaced();
         final var player =  event.getPlayer();
-        final var task = travelerManager.getTask(player, ModifyWaypointTask.class);
+        final var task = travelerMap.getTask(player, TravelerTask.class);
 
         if (task == null) {
-            if (waypointManager.isWaypoint(blockPlaced)) {
-                final var waypoint = waypointManager.getNearbyWaypoint(blockPlaced);
-                hologramManager.updateTrackedPlayers(waypoint, player);
+            if (waypointMap.isWaypoint(blockPlaced)) {
+                final var waypoint = waypointMap.getNearbyWaypoint(blockPlaced);
+                hologramMap.updateTrackedPlayers(waypoint, player);
             }
             return;
         }
@@ -59,22 +59,22 @@ public final class EventListener implements Listener {
             return;
         }
 
-        switch (task.getMode()) {
+        switch (task.getType()) {
             case CREATE -> {
-                final var waypoint = waypointManager.createWaypoint(blockPlaced);
+                final var waypoint = waypointMap.createWaypoint(blockPlaced);
 
                 if (waypoint == null) {
                     player.sendMessage(Component.text("There is already a waypoint nearby!", NamedTextColor.RED));
                     return;
                 }
 
-                hologramManager.showTrackedPlayers(waypoint, player);
+                hologramMap.showTrackedPlayers(waypoint, player);
             }
             default -> {
                 return;
             }
         }
-        travelerManager.unregisterTask(player);
+        travelerMap.unregisterTask(player);
     }
 
     private boolean isValidWaypointPlacement(Block blockPlaced, Block blockAgainst) {
@@ -96,24 +96,24 @@ public final class EventListener implements Listener {
 
     @EventHandler
     public void onPlayerChunkLoad(PlayerChunkLoadEvent event) {
-        final var waypoint = waypointManager.getWaypoint(event.getChunk().getChunkKey());
+        final var waypoint = waypointMap.getWaypoint(event.getChunk().getChunkKey());
 
         if (waypoint == null || waypoint.getLocation().getWorld() != event.getWorld()) {
             return;
         }
 
-        hologramManager.show(waypoint, event.getPlayer());
+        hologramMap.show(waypoint, event.getPlayer());
     }
 
     @EventHandler
     public void onPlayerChunkUnload(PlayerChunkUnloadEvent event) {
-        final var waypoint = waypointManager.getWaypoint(event.getChunk().getChunkKey());
+        final var waypoint = waypointMap.getWaypoint(event.getChunk().getChunkKey());
 
         if (waypoint == null || waypoint.getLocation().getWorld() != event.getWorld()) {
             return;
         }
 
-        hologramManager.hide(waypoint, event.getPlayer());
+        hologramMap.hide(waypoint, event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = false)
@@ -124,22 +124,22 @@ public final class EventListener implements Listener {
 
         final var clickedBlock = event.getClickedBlock();
         final var player = event.getPlayer();
-        final var task = travelerManager.getTask(player, ModifyWaypointTask.class);
+        final var task = travelerMap.getTask(player, TravelerTask.class);
 
-        if (!waypointManager.isWaypoint(clickedBlock)) {
+        if (!waypointMap.isWaypoint(clickedBlock)) {
             if (task == null || !Tag.ITEMS_BANNERS.isTagged(clickedBlock.getType())) {
                 return;
             }
-            switch (task.getMode()) {
+            switch (task.getType()) {
                 case SETCAMP -> {
                     if (plugin.getWorldCamp().contains(clickedBlock.getWorld().getName())) {
-                        travelerManager.getOrCreateTraveler(player).setCamp(clickedBlock.getLocation());
+                        travelerMap.getOrCreateTraveler(player).setCamp(clickedBlock.getLocation());
                         player.sendMessage(Component.text("You assigned your camp!", NamedTextColor.GREEN));
                     }
                 }
                 case SETHOME -> {
                     if (plugin.getWorldHome().contains(clickedBlock.getWorld().getName())) {
-                        travelerManager.getOrCreateTraveler(player).setHome(clickedBlock.getLocation());
+                        travelerMap.getOrCreateTraveler(player).setHome(clickedBlock.getLocation());
                         player.sendMessage(Component.text("You assigned your home!", NamedTextColor.GREEN));
                     }
                 }
@@ -147,15 +147,15 @@ public final class EventListener implements Listener {
                     return;
                 }
             }
-            travelerManager.unregisterTask(player);
+            travelerMap.unregisterTask(player);
             return;
         }
 
-        final var waypoint = waypointManager.getNearbyWaypoint(clickedBlock);
+        final var waypoint = waypointMap.getNearbyWaypoint(clickedBlock);
 
         if (task == null) {
             if (waypoint.isActive()) {
-                final var traveler = travelerManager.getOrCreateTraveler(player);
+                final var traveler = travelerMap.getOrCreateTraveler(player);
                 if (!traveler.hasWaypoint(waypoint)) {
                     traveler.registerWaypoint(waypoint);
                     player.sendMessage(Component.text("You registered a waypoint!", NamedTextColor.GOLD));
@@ -176,10 +176,10 @@ public final class EventListener implements Listener {
             return;
         }
 
-        switch (task.getMode()) {
+        switch (task.getType()) {
             case ACTIVATE -> {
                 waypoint.activate();
-                hologramManager.updateTrackedPlayers(waypoint, player);
+                hologramMap.updateTrackedPlayers(waypoint, player);
             }
             case ADDTOKEN -> {
                 if (waypoint.isActive()) {
@@ -187,7 +187,7 @@ public final class EventListener implements Listener {
                 }
                 final var tokenRequirement = plugin.getWaypointTokenRequirement();
                 final var contributors = waypoint.getContributors();
-                final var traveler = travelerManager.getOrCreateTraveler(player);
+                final var traveler = travelerMap.getOrCreateTraveler(player);
                 final var tokens = traveler.getTokens();
                 if (tokens > 0) {
                     player.sendMessage(Component.text("You added a token!", NamedTextColor.BLUE));
@@ -195,7 +195,7 @@ public final class EventListener implements Listener {
                     contributors.add(player.getUniqueId());
                     if (contributors.size() >= tokenRequirement) {
                         waypoint.activate();
-                        hologramManager.updateTrackedPlayers(waypoint, player);
+                        hologramMap.updateTrackedPlayers(waypoint, player);
                     }
                 }
                 sendActionBar(player, contributors.size(), tokenRequirement);
@@ -204,23 +204,23 @@ public final class EventListener implements Listener {
                 if (waypoint.isActive()) {
                     return;
                 }
-                waypointManager.removeWaypoint(waypoint);
+                waypointMap.removeWaypoint(waypoint);
                 final var maxTokens = plugin.getTravelerMaxTokens();
                 for (final var uniqueId : waypoint.getContributors()) {
-                    final var traveler = travelerManager.getOrCreateTraveler(uniqueId);
+                    final var traveler = travelerMap.getOrCreateTraveler(uniqueId);
                     traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
                 }
-                hologramManager.remove(waypoint);
+                hologramMap.remove(waypoint);
             }
             case DELETE -> {
-                waypointManager.removeWaypoint(waypoint);
-                travelerManager.removeWaypoint(waypoint);
+                waypointMap.removeWaypoint(waypoint);
+                travelerMap.removeWaypoint(waypoint);
                 final var maxTokens = plugin.getTravelerMaxTokens();
                 for (final var uniqueId : waypoint.getContributors()) {
-                    final var traveler = travelerManager.getOrCreateTraveler(uniqueId);
+                    final var traveler = travelerMap.getOrCreateTraveler(uniqueId);
                     traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
                 }
-                hologramManager.remove(waypoint);
+                hologramMap.remove(waypoint);
             }
             case REMOVETOKEN -> {
                 if (waypoint.isActive()) {
@@ -231,7 +231,7 @@ public final class EventListener implements Listener {
                 if (contributors.contains(uniqueId)) {
                     player.sendMessage(Component.text("You removed a token!", NamedTextColor.BLUE));
                     final var maxTokens = plugin.getTravelerMaxTokens();
-                    final var traveler = travelerManager.getOrCreateTraveler(player);
+                    final var traveler = travelerMap.getOrCreateTraveler(player);
                     traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
                     contributors.remove(uniqueId);
                 }
@@ -242,7 +242,7 @@ public final class EventListener implements Listener {
                 return;
             }
         }
-        travelerManager.unregisterTask(player);
+        travelerMap.unregisterTask(player);
     }
 
     private static void sendActionBar(Player player, int contributorsSize, int tokenRequirement) {
@@ -252,15 +252,15 @@ public final class EventListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         final var player = event.getPlayer();
-        travelerManager.getOrCreateTraveler(player).startRegenCharge(plugin);
+        travelerMap.getOrCreateTraveler(player).startRegenCharge(plugin);
     }
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         final var player = event.getPlayer();
-        travelerManager.getOrCreateTraveler(player).stopRegenCharge();
-        travelerManager.unregisterTask(player);
-        hologramManager.remove(player);
+        travelerMap.getOrCreateTraveler(player).stopRegenCharge();
+        travelerMap.unregisterTask(player);
+        hologramMap.remove(player);
     }
 
     @EventHandler

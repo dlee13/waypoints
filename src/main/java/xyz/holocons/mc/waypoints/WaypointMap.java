@@ -9,13 +9,13 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 
-public class WaypointManager {
+public class WaypointMap {
 
     public static final String FILENAME = "waypoint.json";
 
     private final HashMap<Long, Waypoint> waypoints;
 
-    public WaypointManager() {
+    public WaypointMap() {
         this.waypoints = new HashMap<>();
     }
 

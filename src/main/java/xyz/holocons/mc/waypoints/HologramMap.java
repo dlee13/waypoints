@@ -14,7 +14,7 @@ import com.comphenix.protocol.events.PacketContainer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class HologramManager {
+public class HologramMap {
 
     public record FakeEntity(int entityId, UUID uniqueId) {
 
@@ -29,7 +29,7 @@ public class HologramManager {
     private final ProtocolManager protocolManager;
     private final HashMap<Hologram, Integer> holograms;
 
-    public HologramManager() {
+    public HologramMap() {
         this.protocolManager = ProtocolLibrary.getProtocolManager();
         this.holograms = new HashMap<>();
     }

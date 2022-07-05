@@ -17,8 +17,8 @@ import net.kyori.adventure.text.Component;
 public class Menu implements InventoryHolder {
 
     public enum Type {
-        Edit,
-        Teleport,
+        EDIT,
+        TELEPORT,
     }
 
     private final Inventory inventory;
@@ -36,10 +36,10 @@ public class Menu implements InventoryHolder {
         this.type = type;
 
         switch (type) {
-            case Edit -> {
+            case EDIT -> {
                 createEditPage(0);
             }
-            case Teleport -> {
+            case TELEPORT -> {
                 createTeleportPage(0);
             }
             default -> {
@@ -54,7 +54,7 @@ public class Menu implements InventoryHolder {
     }
 
     private void createEditPage(int page) {
-        final var waypoints = plugin.getWaypointManager()
+        final var waypoints = plugin.getWaypointMap()
                 .getAllWaypoints()
                 .sorted(Comparator.comparing(Waypoint::getName))
                 .toList();
@@ -86,8 +86,8 @@ public class Menu implements InventoryHolder {
     }
 
     private void createTeleportPage(int page) {
-        final var traveler = plugin.getTravelerManager().getOrCreateTraveler(player);
-        final var waypoints = plugin.getWaypointManager()
+        final var traveler = plugin.getTravelerMap().getOrCreateTraveler(player);
+        final var waypoints = plugin.getWaypointMap()
                 .getActiveWaypoints()
                 .filter(traveler::hasWaypoint)
                 .sorted(Comparator.comparing(Waypoint::getName))
@@ -142,7 +142,7 @@ public class Menu implements InventoryHolder {
 
     public void handleClick(ItemStack clickedItem) {
         switch (type) {
-            case Edit -> {
+            case EDIT -> {
                 final var location = clickedItem.getItemMeta().getPersistentDataContainer()
                         .get(locationKey, DataType.LOCATION);
                 if (location == null) {
@@ -154,7 +154,7 @@ public class Menu implements InventoryHolder {
                 player.teleport(location);
                 inventory.close();
             }
-            case Teleport -> {
+            case TELEPORT -> {
                 final var location = clickedItem.getItemMeta().getPersistentDataContainer()
                         .get(locationKey, DataType.LOCATION);
                 if (location == null) {
