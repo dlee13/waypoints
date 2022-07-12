@@ -119,4 +119,12 @@ public class TravelerMap {
     public void removeWaypoint(Waypoint waypoint) {
         travelers.values().forEach(traveler -> traveler.unregisterWaypoint(waypoint));
     }
+
+    public void removeCamps() {
+        travelers.values().forEach(traveler -> traveler.setCamp(null));
+    }
+
+    public void removeHomes() {
+        travelers.values().forEach(traveler -> traveler.setHome(null));
+    }
 }

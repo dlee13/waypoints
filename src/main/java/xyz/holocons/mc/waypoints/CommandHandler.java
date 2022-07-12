@@ -67,6 +67,12 @@ public class CommandHandler implements TabExecutor {
                         case "MENU" -> {
                             new Menu(plugin, player, Menu.Type.EDIT);
                         }
+                        case "UNSETCAMPS" -> {
+                            travelerMap.removeCamps();
+                        }
+                        case "UNSETHOMES" -> {
+                            travelerMap.removeHomes();
+                        }
                         default -> {
                             return false;
                         }
@@ -140,15 +146,15 @@ public class CommandHandler implements TabExecutor {
     private void teleport(Player player, String destination) {
         final var traveler = travelerMap.getOrCreateTraveler(player);
         Location location;
-        if (destination.equalsIgnoreCase("home")) {
-            location = traveler.getHome();
-            if (location == null) {
-                player.sendMessage(Component.text("You don't have a home!"));
-            }
-        } else if (destination.equalsIgnoreCase("camp")) {
+        if (destination.equalsIgnoreCase("camp")) {
             location = traveler.getCamp();
             if (location == null) {
                 player.sendMessage(Component.text("You don't have a camp!"));
+            }
+        } else if (destination.equalsIgnoreCase("home")) {
+            location = traveler.getHome();
+            if (location == null) {
+                player.sendMessage(Component.text("You don't have a home!"));
             }
         } else {
             Predicate<Waypoint> matchesName = waypoint -> waypoint.getName().matches(destination);
