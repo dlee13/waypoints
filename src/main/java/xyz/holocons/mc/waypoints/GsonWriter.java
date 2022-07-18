@@ -10,14 +10,13 @@ import java.util.BitSet;
 import java.util.HexFormat;
 import java.util.UUID;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 
 import org.bukkit.Location;
 
 public class GsonWriter extends JsonWriter {
 
-    public GsonWriter(final Gson gson, final File file) throws IOException {
+    public GsonWriter(final File file) throws IOException {
         super(new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"))));
     }
 

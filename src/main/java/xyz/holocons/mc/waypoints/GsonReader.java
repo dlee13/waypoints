@@ -11,7 +11,6 @@ import java.util.BitSet;
 import java.util.HexFormat;
 import java.util.UUID;
 
-import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 
@@ -20,7 +19,7 @@ import org.bukkit.Location;
 
 public class GsonReader extends JsonReader {
 
-    public GsonReader(final Gson gson, final File file) throws FileNotFoundException {
+    public GsonReader(final File file) throws FileNotFoundException {
         super(new BufferedReader(new FileReader(file)));
     }
 

@@ -32,7 +32,7 @@ public class TravelerMap {
             clearTravelers();
         }
 
-        final var reader = new GsonReader(plugin.getGson(), file);
+        final var reader = new GsonReader(file);
         reader.beginObject();
         while (reader.hasNext()) {
             var uniqueIdString = reader.nextName();
@@ -40,6 +40,7 @@ public class TravelerMap {
             try {
                 uniqueId = UUID.fromString(uniqueIdString);
             } catch (IllegalArgumentException e) {
+                reader.close();
                 throw new IOException("Unrecognized UUID: " + uniqueIdString);
             }
             var traveler = reader.nextTraveler();
@@ -60,7 +61,7 @@ public class TravelerMap {
 
         final var file = new File(plugin.getDataFolder(), FILENAME);
 
-        final var writer = new GsonWriter(plugin.getGson(), file);
+        final var writer = new GsonWriter(file);
         writer.beginObject();
         for (final var traveler : travelers.entrySet()) {
             writer.name(traveler.getKey().toString());

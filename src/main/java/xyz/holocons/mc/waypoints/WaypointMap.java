@@ -30,7 +30,7 @@ public class WaypointMap {
             clearWaypoints();
         }
 
-        final var reader = new GsonReader(plugin.getGson(), file);
+        final var reader = new GsonReader(file);
         reader.beginArray();
         while (reader.hasNext()) {
             var waypoint = reader.nextWaypoint();
@@ -48,7 +48,7 @@ public class WaypointMap {
 
         final var file = new File(plugin.getDataFolder(), FILENAME);
 
-        final var writer = new GsonWriter(plugin.getGson(), file);
+        final var writer = new GsonWriter(file);
         writer.beginArray();
         for (var waypoint : waypoints.values()) {
             writer.value(waypoint);

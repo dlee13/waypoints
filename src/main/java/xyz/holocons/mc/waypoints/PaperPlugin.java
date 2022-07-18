@@ -6,15 +6,12 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.List;
 
-import com.google.gson.Gson;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class PaperPlugin extends JavaPlugin {
 
     private FileConfiguration config;
-    private Gson gson;
     private HologramMap hologramMap;
     private TravelerMap travelerMap;
     private WaypointMap waypointMap;
@@ -23,7 +20,6 @@ public final class PaperPlugin extends JavaPlugin {
     public void onLoad() {
         saveDefaultConfig();
         config = getConfig();
-        gson = new Gson();
         hologramMap = new HologramMap();
         travelerMap = new TravelerMap();
         waypointMap = new WaypointMap();
@@ -105,10 +101,6 @@ public final class PaperPlugin extends JavaPlugin {
 
     public List<String> getWorldCamp() {
         return config.getStringList("world.camp");
-    }
-
-    public Gson getGson() {
-        return gson;
     }
 
     public HologramMap getHologramMap() {
