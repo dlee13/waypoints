@@ -31,7 +31,7 @@ public final class DataType {
             final var z = complex.getZ();
             final var world = complex.isWorldLoaded() ? complex.getWorld().getUID() : new UUID(0, 0);
 
-            final var buffer = ByteBuffer.wrap(new byte[BYTES]);
+            final var buffer = ByteBuffer.allocate(BYTES);
             buffer.putDouble(x);
             buffer.putDouble(y);
             buffer.putDouble(z);
@@ -70,7 +70,7 @@ public final class DataType {
 
         @Override
         public byte[] toPrimitive(UUID complex, PersistentDataAdapterContext context) {
-            final var buffer = ByteBuffer.wrap(new byte[BYTES]);
+            final var buffer = ByteBuffer.allocate(BYTES);
             buffer.putLong(complex.getMostSignificantBits());
             buffer.putLong(complex.getLeastSignificantBits());
             return buffer.array();
