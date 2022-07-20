@@ -28,26 +28,15 @@ public class TravelerMap {
             return;
         }
 
-        if (!travelers.isEmpty()) {
-            clearTravelers();
-        }
-
         final var reader = new GsonReader(file);
-        reader.beginObject();
-        while (reader.hasNext()) {
-            var uniqueIdString = reader.nextName();
-            UUID uniqueId;
-            try {
-                uniqueId = UUID.fromString(uniqueIdString);
-            } catch (IllegalArgumentException e) {
-                reader.close();
-                throw new IOException("Unrecognized UUID: " + uniqueIdString);
-            }
-            var traveler = reader.nextTraveler();
-            travelers.put(uniqueId, traveler);
-        }
-        reader.endObject();
+        final var travelerMap = reader.readTravelerMap();
         reader.close();
+
+        clearTravelers();
+
+        if (travelerMap != null) {
+            travelers.putAll(travelerMap);
+        }
 
         for (var player : Bukkit.getOnlinePlayers()) {
             getOrCreateTraveler(player).startRegenCharge(plugin);
@@ -62,12 +51,7 @@ public class TravelerMap {
         final var file = new File(plugin.getDataFolder(), FILENAME);
 
         final var writer = new GsonWriter(file);
-        writer.beginObject();
-        for (final var traveler : travelers.entrySet()) {
-            writer.name(traveler.getKey().toString());
-            writer.value(traveler.getValue());
-        }
-        writer.endObject();
+        writer.writeTravelerMap(travelers);
         writer.close();
     }
 

@@ -26,19 +26,15 @@ public class WaypointMap {
             return;
         }
 
-        if (!waypoints.isEmpty()) {
-            clearWaypoints();
-        }
-
         final var reader = new GsonReader(file);
-        reader.beginArray();
-        while (reader.hasNext()) {
-            var waypoint = reader.nextWaypoint();
-            var chunkKey = waypoint.getChunkKey();
-            waypoints.put(chunkKey, waypoint);
-        }
-        reader.endArray();
+        final var waypointMap = reader.readWaypointMap();
         reader.close();
+
+        clearWaypoints();
+
+        if (waypointMap != null) {
+            waypoints.putAll(waypointMap);
+        }
     }
 
     public void saveWaypoints(PaperPlugin plugin) throws IOException {
@@ -49,11 +45,7 @@ public class WaypointMap {
         final var file = new File(plugin.getDataFolder(), FILENAME);
 
         final var writer = new GsonWriter(file);
-        writer.beginArray();
-        for (var waypoint : waypoints.values()) {
-            writer.value(waypoint);
-        }
-        writer.endArray();
+        writer.writeWaypointMap(waypoints);
         writer.close();
     }
 

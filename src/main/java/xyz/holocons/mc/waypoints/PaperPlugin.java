@@ -58,8 +58,6 @@ public final class PaperPlugin extends JavaPlugin {
             travelerMap.loadTravelers(this);
             waypointMap.loadWaypoints(this);
         } catch (IOException e) {
-            travelerMap.clearTravelers();
-            waypointMap.clearWaypoints();
             throw new UncheckedIOException(e);
         }
         getLogger().info("Loaded");

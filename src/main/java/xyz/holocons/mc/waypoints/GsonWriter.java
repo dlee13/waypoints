@@ -4,9 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.UUID;
 
@@ -17,10 +18,37 @@ import org.bukkit.Location;
 public class GsonWriter extends JsonWriter {
 
     public GsonWriter(final File file) throws IOException {
-        super(new BufferedWriter(new FileWriter(file, Charset.forName("UTF-8"))));
+        super(new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8)));
     }
 
-    public void value(Waypoint value) throws IOException {
+    public void writeWaypointMap(HashMap<Long, Waypoint> value) throws IOException {
+        if (value == null) {
+            nullValue();
+            return;
+        }
+
+        beginArray();
+        for (final var waypoint : value.values()) {
+            writeWaypoint(waypoint);
+        }
+        endArray();
+    }
+
+    public void writeTravelerMap(HashMap<UUID, Traveler> value) throws IOException {
+        if (value == null) {
+            nullValue();
+            return;
+        }
+
+        beginObject();
+        for (final var traveler : value.entrySet()) {
+            name(traveler.getKey().toString());
+            writeTraveler(traveler.getValue());
+        }
+        endObject();
+    }
+
+    public void writeWaypoint(Waypoint value) throws IOException {
         if (value == null) {
             nullValue();
             return;
@@ -30,15 +58,15 @@ public class GsonWriter extends JsonWriter {
         name("id");
         value(value.getId());
         name("location");
-        value(value.getLocation());
+        writeLocation(value.getLocation());
         name("contributors");
-        value(value.getContributors());
+        writeArrayListUUID(value.getContributors());
         name("active");
         value(value.isActive());
         endObject();
     }
 
-    public void value(Traveler value) throws IOException {
+    public void writeTraveler(Traveler value) throws IOException {
         if (value == null) {
             nullValue();
             return;
@@ -50,15 +78,15 @@ public class GsonWriter extends JsonWriter {
         name("tokens");
         value(value.getTokens());
         name("home");
-        value(value.getHome());
+        writeLocation(value.getHome());
         name("camp");
-        value(value.getCamp());
+        writeLocation(value.getCamp());
         name("waypoints");
-        value(value.getWaypoints());
+        writeBitSet(value.getWaypoints());
         endObject();
     }
 
-    public void value(Location value) throws IOException {
+    public void writeLocation(Location value) throws IOException {
         if (value == null) {
             nullValue();
             return;
@@ -71,7 +99,7 @@ public class GsonWriter extends JsonWriter {
         value(world + ',' + x + ',' + y + ',' + z);
     }
 
-    public void value(BitSet value) throws IOException {
+    public void writeBitSet(BitSet value) throws IOException {
         if (value == null) {
             nullValue();
             return;
@@ -80,7 +108,7 @@ public class GsonWriter extends JsonWriter {
         value(HexFormat.of().formatHex(value.toByteArray()));
     }
 
-    public void value(ArrayList<UUID> value) throws IOException {
+    public void writeArrayListUUID(ArrayList<UUID> value) throws IOException {
         if (value == null || value.isEmpty()) {
             nullValue();
             return;

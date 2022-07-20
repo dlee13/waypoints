@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.UUID;
 
@@ -23,7 +24,51 @@ public class GsonReader extends JsonReader {
         super(new BufferedReader(new FileReader(file)));
     }
 
-    public Waypoint nextWaypoint() throws IOException {
+    public HashMap<Long, Waypoint> readWaypointMap() throws IOException {
+        if (peek() == JsonToken.NULL) {
+            nextNull();
+            return null;
+        }
+
+        HashMap<Long, Waypoint> map = new HashMap<>();
+
+        beginArray();
+        while (hasNext()) {
+            var waypoint = readWaypoint();
+            var chunkKey = waypoint.getChunkKey();
+            map.put(chunkKey, waypoint);
+        }
+        endArray();
+
+        return map.isEmpty() ? null : map;
+    }
+
+    public HashMap<UUID, Traveler> readTravelerMap() throws IOException {
+        if (peek() == JsonToken.NULL) {
+            nextNull();
+            return null;
+        }
+
+        HashMap<UUID, Traveler> map = new HashMap<>();
+
+        beginObject();
+        while (hasNext()) {
+            var uniqueIdString = nextName();
+            UUID uniqueId;
+            try {
+                uniqueId = UUID.fromString(uniqueIdString);
+            } catch (IllegalArgumentException e) {
+                throw new IOException("Unrecognized UUID: " + uniqueIdString);
+            }
+            var traveler = readTraveler();
+            map.put(uniqueId, traveler);
+        }
+        endObject();
+
+        return map.isEmpty() ? null : map;
+    }
+
+    public Waypoint readWaypoint() throws IOException {
         if (peek() == JsonToken.NULL) {
             nextNull();
             return null;
@@ -37,19 +82,19 @@ public class GsonReader extends JsonReader {
         beginObject();
         while (hasNext()) {
             switch (nextName()) {
-                case "id"           -> id = nextInt();
-                case "location"     -> location = nextLocation();
-                case "contributors" -> contributors = nextArrayListUUID();
-                case "active"       -> active = nextBoolean();
+                case "id" -> id = nextInt();
+                case "location" -> location = readLocation();
+                case "contributors" -> contributors = readArrayListUUID();
+                case "active" -> active = nextBoolean();
                 default -> throw new IOException("Unrecognized property name");
             }
         }
         endObject();
 
-        return id != -1 ? new Waypoint(id, location, contributors, active) : null;
+        return id == -1 ? null : new Waypoint(id, location, contributors, active);
     }
 
-    public Traveler nextTraveler() throws IOException {
+    public Traveler readTraveler() throws IOException {
         if (peek() == JsonToken.NULL) {
             nextNull();
             return null;
@@ -64,11 +109,11 @@ public class GsonReader extends JsonReader {
         beginObject();
         while (hasNext()) {
             switch (nextName()) {
-                case "charges"   -> charges = nextInt();
-                case "tokens"    -> tokens = nextInt();
-                case "home"      -> home = nextLocation();
-                case "camp"      -> camp = nextLocation();
-                case "waypoints" -> waypoints = nextBitSet();
+                case "charges" -> charges = nextInt();
+                case "tokens" -> tokens = nextInt();
+                case "home" -> home = readLocation();
+                case "camp" -> camp = readLocation();
+                case "waypoints" -> waypoints = readBitSet();
                 default -> throw new IOException("Unrecognized property name");
             }
         }
@@ -77,7 +122,7 @@ public class GsonReader extends JsonReader {
         return new Traveler(charges, tokens, home, camp, waypoints);
     }
 
-    public Location nextLocation() throws IOException {
+    public Location readLocation() throws IOException {
         if (peek() == JsonToken.NULL) {
             nextNull();
             return null;
@@ -100,7 +145,7 @@ public class GsonReader extends JsonReader {
         return new Location(world, x, y, z);
     }
 
-    public BitSet nextBitSet() throws IOException {
+    public BitSet readBitSet() throws IOException {
         if (peek() == JsonToken.NULL) {
             nextNull();
             return null;
@@ -117,7 +162,7 @@ public class GsonReader extends JsonReader {
         return BitSet.valueOf(bytes);
     }
 
-    public ArrayList<UUID> nextArrayListUUID() throws IOException {
+    public ArrayList<UUID> readArrayListUUID() throws IOException {
         if (peek() == JsonToken.NULL) {
             nextNull();
             return null;
@@ -143,6 +188,6 @@ public class GsonReader extends JsonReader {
         }
         endArray();
 
-        return !list.isEmpty() ? list : null;
+        return list.isEmpty() ? null : list;
     }
 }
