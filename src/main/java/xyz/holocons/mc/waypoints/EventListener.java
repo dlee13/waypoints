@@ -1,6 +1,7 @@
 package xyz.holocons.mc.waypoints;
 
 import org.bukkit.Bukkit;
+import org.bukkit.EntityEffect;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -10,6 +11,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -261,6 +263,30 @@ public final class EventListener implements Listener {
         travelerMap.getOrCreateTraveler(player).stopRegenCharge();
         travelerMap.unregisterTask(player);
         hologramMap.remove(player);
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onProjectileLaunch(ProjectileLaunchEvent event) {
+        if (!(event.getEntity().getShooter() instanceof Player player)
+                || !plugin.isToken(event.getEntity())) {
+            return;
+        }
+
+        event.setCancelled(true);
+        final var playerInventory = player.getInventory();
+        if (plugin.isToken(playerInventory.getItemInMainHand())) {
+            playerInventory.setItemInMainHand(playerInventory.getItemInMainHand().subtract());
+            player.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
+        } else if (plugin.isToken(playerInventory.getItemInOffHand())) {
+            playerInventory.setItemInOffHand(playerInventory.getItemInOffHand().subtract());
+            player.playEffect(EntityEffect.BREAK_EQUIPMENT_OFF_HAND);
+        } else {
+            return;
+        }
+
+        final var maxTokens = plugin.getTravelerMaxTokens();
+        final var traveler = travelerMap.getOrCreateTraveler(player);
+        traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
     }
 
     @EventHandler

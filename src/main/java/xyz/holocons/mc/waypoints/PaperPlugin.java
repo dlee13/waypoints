@@ -6,6 +6,7 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -15,6 +16,7 @@ public final class PaperPlugin extends JavaPlugin {
     private HologramMap hologramMap;
     private TravelerMap travelerMap;
     private WaypointMap waypointMap;
+    private Token token;
 
     @Override
     public void onLoad() {
@@ -23,6 +25,7 @@ public final class PaperPlugin extends JavaPlugin {
         hologramMap = new HologramMap();
         travelerMap = new TravelerMap();
         waypointMap = new WaypointMap();
+        token = new Token(this);
     }
 
     @Override
@@ -31,7 +34,7 @@ public final class PaperPlugin extends JavaPlugin {
         getCommand("waypoints").setExecutor(commandHandler);
         getCommand("editwaypoints").setExecutor(commandHandler);
         final var eventListener = new EventListener(this);
-        getServer().getPluginManager().registerEvents(eventListener, this);
+        Bukkit.getPluginManager().registerEvents(eventListener, this);
     }
 
     @Override
@@ -111,5 +114,9 @@ public final class PaperPlugin extends JavaPlugin {
 
     public WaypointMap getWaypointMap() {
         return waypointMap;
+    }
+
+    public boolean isToken(Object obj) {
+        return token.isToken(obj);
     }
 }
