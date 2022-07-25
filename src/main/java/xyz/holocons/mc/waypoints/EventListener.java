@@ -275,11 +275,11 @@ public final class EventListener implements Listener {
         event.setCancelled(true);
         final var playerInventory = player.getInventory();
         if (plugin.isToken(playerInventory.getItemInMainHand())) {
-            playerInventory.setItemInMainHand(playerInventory.getItemInMainHand().subtract());
             player.playEffect(EntityEffect.BREAK_EQUIPMENT_MAIN_HAND);
+            playerInventory.setItemInMainHand(playerInventory.getItemInMainHand().subtract());
         } else if (plugin.isToken(playerInventory.getItemInOffHand())) {
-            playerInventory.setItemInOffHand(playerInventory.getItemInOffHand().subtract());
             player.playEffect(EntityEffect.BREAK_EQUIPMENT_OFF_HAND);
+            playerInventory.setItemInOffHand(playerInventory.getItemInOffHand().subtract());
         } else {
             return;
         }
