@@ -27,12 +27,12 @@ import net.kyori.adventure.text.format.NamedTextColor;
 
 public final class EventListener implements Listener {
 
-    private final PaperPlugin plugin;
+    private final WaypointsPlugin plugin;
     private final HologramMap hologramMap;
     private final TravelerMap travelerMap;
     private final WaypointMap waypointMap;
 
-    public EventListener(final PaperPlugin plugin) {
+    public EventListener(final WaypointsPlugin plugin) {
         this.plugin = plugin;
         this.hologramMap = plugin.getHologramMap();
         this.travelerMap = plugin.getTravelerMap();

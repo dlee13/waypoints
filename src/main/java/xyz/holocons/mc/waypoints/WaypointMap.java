@@ -19,7 +19,7 @@ public class WaypointMap {
         this.waypoints = new HashMap<>();
     }
 
-    public void loadWaypoints(PaperPlugin plugin) throws IOException {
+    public void loadWaypoints(WaypointsPlugin plugin) throws IOException {
         final var file = new File(plugin.getDataFolder(), FILENAME);
 
         if (!file.exists()) {
@@ -37,7 +37,7 @@ public class WaypointMap {
         }
     }
 
-    public void saveWaypoints(PaperPlugin plugin) throws IOException {
+    public void saveWaypoints(WaypointsPlugin plugin) throws IOException {
         if (waypoints.isEmpty()) {
             return;
         }

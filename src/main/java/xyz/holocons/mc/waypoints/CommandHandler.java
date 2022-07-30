@@ -15,11 +15,11 @@ import net.kyori.adventure.text.Component;
 
 public class CommandHandler implements TabExecutor {
 
-    private final PaperPlugin plugin;
+    private final WaypointsPlugin plugin;
     private final TravelerMap travelerMap;
     private final WaypointMap waypointMap;
 
-    public CommandHandler(final PaperPlugin plugin) {
+    public CommandHandler(final WaypointsPlugin plugin) {
         this.plugin = plugin;
         this.travelerMap = plugin.getTravelerMap();
         this.waypointMap = plugin.getWaypointMap();

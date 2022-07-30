@@ -15,7 +15,7 @@ public class Token {
 
     private final NamespacedKey key;
 
-    public Token(PaperPlugin plugin) {
+    public Token(WaypointsPlugin plugin) {
         this.key = new NamespacedKey(plugin, "token");
         Bukkit.addRecipe(getRecipe());
     }

@@ -78,7 +78,7 @@ public class Traveler {
         this.camp = camp;
     }
 
-    public void startRegenCharge(PaperPlugin plugin) {
+    public void startRegenCharge(WaypointsPlugin plugin) {
         if (regenChargeTask == null || regenChargeTask.isCancelled()) {
             final var traveler = this;
             final var maxCharges = plugin.getTravelerMaxCharges();

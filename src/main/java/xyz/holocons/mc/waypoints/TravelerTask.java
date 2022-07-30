@@ -25,7 +25,7 @@ public class TravelerTask extends BukkitRunnable {
     private final Type type;
     private final int expiration;
 
-    public TravelerTask(final PaperPlugin plugin, final Player player, final Type type) {
+    public TravelerTask(final WaypointsPlugin plugin, final Player player, final Type type) {
         plugin.getTravelerMap().registerTask(player, this);
         final var period = 40;
         runTaskTimer(plugin, 0, period);

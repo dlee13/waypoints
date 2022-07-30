@@ -23,11 +23,11 @@ public class Menu implements InventoryHolder {
 
     private final Inventory inventory;
     private final NamespacedKey locationKey, pageKey;
-    private final PaperPlugin plugin;
+    private final WaypointsPlugin plugin;
     private final Player player;
     private final Type type;
 
-    public Menu(final PaperPlugin plugin, final Player player, final Type type) {
+    public Menu(final WaypointsPlugin plugin, final Player player, final Type type) {
         this.inventory = Bukkit.createInventory(this, 54, Component.text("Waypoints"));
         this.locationKey = new NamespacedKey(plugin, "location");
         this.pageKey = new NamespacedKey(plugin, "page");

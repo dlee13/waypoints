@@ -21,7 +21,7 @@ public class TravelerMap {
         this.tasks = new HashMap<>();
     }
 
-    public void loadTravelers(PaperPlugin plugin) throws IOException {
+    public void loadTravelers(WaypointsPlugin plugin) throws IOException {
         final var file = new File(plugin.getDataFolder(), FILENAME);
 
         if (!file.exists()) {
@@ -43,7 +43,7 @@ public class TravelerMap {
         }
     }
 
-    public void saveTravelers(PaperPlugin plugin) throws IOException {
+    public void saveTravelers(WaypointsPlugin plugin) throws IOException {
         if (travelers.isEmpty()) {
             return;
         }

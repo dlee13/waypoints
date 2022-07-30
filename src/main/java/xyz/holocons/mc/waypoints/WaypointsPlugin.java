@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class PaperPlugin extends JavaPlugin {
+public final class WaypointsPlugin extends JavaPlugin {
 
     private FileConfiguration config;
     private HologramMap hologramMap;

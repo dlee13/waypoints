@@ -36,7 +36,7 @@ tasks {
         filteringCharset = Charsets.UTF_8.name() // We want UTF-8 for everything
 
         val pluginProperties = mapOf(
-            "main" to "xyz.holocons.mc.waypoints.PaperPlugin",
+            "main" to "xyz.holocons.mc.waypoints.WaypointsPlugin",
             "name" to project.name,
             "version" to project.version,
             "description" to project.description,
