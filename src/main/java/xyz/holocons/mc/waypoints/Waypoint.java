@@ -18,6 +18,7 @@ import org.bukkit.inventory.meta.BannerMeta;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 public class Waypoint {
@@ -100,6 +101,7 @@ public class Waypoint {
         var itemStack = getBannerItem(location);
         var itemMeta = itemStack.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        itemMeta.displayName(itemMeta.displayName().decoration(TextDecoration.ITALIC, false));
         var vectorComponent = Component.text()
             .color(NamedTextColor.GRAY)
             .append(Component.text(location.getBlockX()))
