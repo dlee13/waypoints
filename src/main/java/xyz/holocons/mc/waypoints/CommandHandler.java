@@ -43,11 +43,7 @@ public class CommandHandler implements TabExecutor {
                             travelerMap.unregisterTask(player);
                         }
                         case "TELEPORT" -> {
-                            if (args.length == 1) {
-                                new Menu(plugin, player, Menu.Type.TELEPORT);
-                            } else {
-                                teleport(player, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
-                            }
+                            teleport(player, String.join(" ", Arrays.copyOfRange(args, 1, args.length)));
                         }
                         default -> {
                             return false;
@@ -147,7 +143,7 @@ public class CommandHandler implements TabExecutor {
 
     private void teleport(Player player, String destination) {
         final var traveler = travelerMap.getOrCreateTraveler(player);
-        Location location;
+        final Location location;
         if (destination.equalsIgnoreCase("camp")) {
             location = traveler.getCamp();
             if (location == null) {
@@ -159,14 +155,14 @@ public class CommandHandler implements TabExecutor {
                 player.sendMessage(Component.text("You don't have a home!"));
             }
         } else {
-            Predicate<Waypoint> matchesName = waypoint -> waypoint.getName().matches(destination);
-            final var waypoint = waypointMap.getNamedWaypoints().filter(matchesName).findAny().orElse(null);
+            Predicate<Waypoint> matchesDestination = waypoint -> waypoint.getName().equalsIgnoreCase(destination);
+            final var waypoint = waypointMap.getNamedWaypoints().filter(matchesDestination).findAny().orElse(null);
             location = traveler.hasWaypoint(waypoint) ? waypoint.getLocation() : null;
         }
         if (location == null) {
             new Menu(plugin, player, Menu.Type.TELEPORT);
-            return;
+        } else {
+            new TeleportTask(plugin, player, location);
         }
-        new TeleportTask(plugin, player, location);
     }
 }
