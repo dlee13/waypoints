@@ -20,7 +20,7 @@ public class TeleportTask extends BukkitRunnable {
 
     public TeleportTask(final WaypointsPlugin plugin, final Player player, final Location destination) {
         plugin.getTravelerMap().registerTask(player, this);
-        final var teleportWaitTime = plugin.getTravelerTeleportWaitTime();
+        final var teleportWaitTime = plugin.getTeleportWaitTime();
         final var period = teleportWaitTime / 20;
         final var taskId = runTaskTimer(plugin, period, period).getTaskId();
         this.player = player;

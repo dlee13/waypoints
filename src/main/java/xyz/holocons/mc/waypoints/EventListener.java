@@ -81,7 +81,7 @@ public final class EventListener implements Listener {
 
     private boolean isValidWaypointPlacement(Block blockPlaced, Block blockAgainst) {
         return blockAgainst.getFace(blockPlaced) == BlockFace.UP
-            && plugin.getWorldHome().contains(blockPlaced.getWorld().getName());
+            && plugin.getHomeWorlds().contains(blockPlaced.getWorld().getName());
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
@@ -134,13 +134,13 @@ public final class EventListener implements Listener {
             }
             switch (task.getType()) {
                 case SETCAMP -> {
-                    if (plugin.getWorldCamp().contains(clickedBlock.getWorld().getName())) {
+                    if (plugin.getCampWorlds().contains(clickedBlock.getWorld().getName())) {
                         travelerMap.getOrCreateTraveler(player).setCamp(clickedBlock.getLocation());
                         player.sendMessage(Component.text("You assigned your camp!", NamedTextColor.GREEN));
                     }
                 }
                 case SETHOME -> {
-                    if (plugin.getWorldHome().contains(clickedBlock.getWorld().getName())) {
+                    if (plugin.getHomeWorlds().contains(clickedBlock.getWorld().getName())) {
                         travelerMap.getOrCreateTraveler(player).setHome(clickedBlock.getLocation());
                         player.sendMessage(Component.text("You assigned your home!", NamedTextColor.GREEN));
                     }
@@ -163,7 +163,7 @@ public final class EventListener implements Listener {
                     player.sendMessage(Component.text("You registered a waypoint!", NamedTextColor.GOLD));
                 }
             } else {
-                final var tokenRequirement = plugin.getWaypointTokenRequirement();
+                final var tokenRequirement = plugin.getWaypointActivateCost();
                 final var contributors = waypoint.getContributorNames();
                 final var contributorNamesBuilder = Component.text()
                     .color(NamedTextColor.GOLD);
@@ -187,7 +187,7 @@ public final class EventListener implements Listener {
                 if (waypoint.isActive()) {
                     return;
                 }
-                final var tokenRequirement = plugin.getWaypointTokenRequirement();
+                final var tokenRequirement = plugin.getWaypointActivateCost();
                 final var contributors = waypoint.getContributors();
                 final var traveler = travelerMap.getOrCreateTraveler(player);
                 final var tokens = traveler.getTokens();
@@ -207,7 +207,7 @@ public final class EventListener implements Listener {
                     return;
                 }
                 waypointMap.removeWaypoint(waypoint);
-                final var maxTokens = plugin.getTravelerMaxTokens();
+                final var maxTokens = plugin.getMaxTokens();
                 for (final var uniqueId : waypoint.getContributors()) {
                     final var traveler = travelerMap.getOrCreateTraveler(uniqueId);
                     traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
@@ -217,7 +217,7 @@ public final class EventListener implements Listener {
             case DELETE -> {
                 waypointMap.removeWaypoint(waypoint);
                 travelerMap.removeWaypoint(waypoint);
-                final var maxTokens = plugin.getTravelerMaxTokens();
+                final var maxTokens = plugin.getMaxTokens();
                 for (final var uniqueId : waypoint.getContributors()) {
                     final var traveler = travelerMap.getOrCreateTraveler(uniqueId);
                     traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
@@ -232,12 +232,12 @@ public final class EventListener implements Listener {
                 final var contributors = waypoint.getContributors();
                 if (contributors.contains(uniqueId)) {
                     player.sendMessage(Component.text("You removed a token!", NamedTextColor.BLUE));
-                    final var maxTokens = plugin.getTravelerMaxTokens();
+                    final var maxTokens = plugin.getMaxTokens();
                     final var traveler = travelerMap.getOrCreateTraveler(player);
                     traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
                     contributors.remove(uniqueId);
                 }
-                final var tokenRequirement = plugin.getWaypointTokenRequirement();
+                final var tokenRequirement = plugin.getWaypointActivateCost();
                 sendActionBar(player, contributors.size(), tokenRequirement);
             }
             default -> {
@@ -284,7 +284,7 @@ public final class EventListener implements Listener {
             return;
         }
 
-        final var maxTokens = plugin.getTravelerMaxTokens();
+        final var maxTokens = plugin.getMaxTokens();
         final var traveler = travelerMap.getOrCreateTraveler(player);
         traveler.setTokens(Math.min(traveler.getTokens() + 1, maxTokens));
     }

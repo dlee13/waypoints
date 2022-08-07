@@ -1,16 +1,24 @@
-traveler:
-  regen-charge-time: 24000
-  teleport-wait-time: 140
-  max-charges: 9
-  max-tokens: 1
-waypoint:
-  token-requirement: 7
+charge:
+  capacity: 9
+  teleport-home-cost: 0
+  teleport-camp-cost: 0
+  teleport-waypoint-cost: 1
+  regenerate-time: 24000
+  particle-effect: null
+token:
+  capacity: 1
+  activate-waypoint-cost: 8
+  particle-effect: null
+teleport:
+  wait-time: 140
+  particle-effect: null
 world:
   home:
     - world
+  camp:
     - world_nether
     - world_the_end
-  camp:
+  waypoint:
     - world
     - world_nether
     - world_the_end

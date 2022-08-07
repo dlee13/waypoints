@@ -76,32 +76,60 @@ public final class WaypointsPlugin extends JavaPlugin {
         getLogger().info("Saved");
     }
 
-    public int getTravelerRegenChargeTime() {
-        return config.getInt("traveler.regen-charge-time");
+    public int getMaxCharges() {
+        return config.getInt("charge.capacity");
     }
 
-    public int getTravelerTeleportWaitTime() {
-        return config.getInt("traveler.teleport-wait-time");
+    public int getHomeTeleportCost() {
+        return config.getInt("charge.teleport-home-cost");
     }
 
-    public int getTravelerMaxCharges() {
-        return config.getInt("traveler.max-charges");
+    public int getCampTeleportCost() {
+        return config.getInt("charge.teleport-camp-cost");
     }
 
-    public int getTravelerMaxTokens() {
-        return config.getInt("traveler.max-tokens");
+    public int getWaypointTeleportCost() {
+        return config.getInt("charge.teleport-waypoint-cost");
     }
 
-    public int getWaypointTokenRequirement() {
-        return config.getInt("waypoint.token-requirement");
+    public int getRegenerateChargeTime() {
+        return config.getInt("charge.regenerate-time");
     }
 
-    public List<String> getWorldHome() {
+    public String getRegenerateChargeParticle() {
+        return config.getString("charge.particle-effect");
+    }
+
+    public int getMaxTokens() {
+        return config.getInt("token.capacity");
+    }
+
+    public int getWaypointActivateCost() {
+        return config.getInt("token.activate-waypoint-cost");
+    }
+
+    public String getRegenerateTokenParticle() {
+        return config.getString("token.particle-effect");
+    }
+
+    public int getTeleportWaitTime() {
+        return config.getInt("teleport.wait-time");
+    }
+
+    public String getTeleportParticle() {
+        return config.getString("teleport.particle-effect");
+    }
+
+    public List<String> getHomeWorlds() {
         return config.getStringList("world.home");
     }
 
-    public List<String> getWorldCamp() {
+    public List<String> getCampWorlds() {
         return config.getStringList("world.camp");
+    }
+
+    public List<String> getWaypointWorlds() {
+        return config.getStringList("world.waypoint");
     }
 
     public HologramMap getHologramMap() {

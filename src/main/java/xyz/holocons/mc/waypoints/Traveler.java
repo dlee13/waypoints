@@ -81,8 +81,8 @@ public class Traveler {
     public void startRegenCharge(WaypointsPlugin plugin) {
         if (regenChargeTask == null || regenChargeTask.isCancelled()) {
             final var traveler = this;
-            final var maxCharges = plugin.getTravelerMaxCharges();
-            final var period = plugin.getTravelerRegenChargeTime();
+            final var maxCharges = plugin.getMaxCharges();
+            final var period = plugin.getRegenerateChargeTime();
 
             regenChargeTask = new BukkitRunnable() {
 
