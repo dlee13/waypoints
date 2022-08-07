@@ -93,7 +93,7 @@ public final class EventListener implements Listener {
         if (!event.getAction().equals(InventoryAction.PICKUP_ALL) || !(event.getClickedInventory().getHolder() instanceof Menu)) {
             return;
         }
-       Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> menu.handleClick(event.getCurrentItem()));
+       Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> menu.handleClick(event.getCurrentItem(), event.getSlot()));
     }
 
     @EventHandler

@@ -11,20 +11,33 @@ import org.bukkit.util.Vector;
 
 public class TeleportTask extends BukkitRunnable {
 
-    final Player player;
-    final Traveler traveler;
-    final Location destination;
-    final double initialHealth;
-    final Vector initialPosition;
-    final NamespacedKey key;
+    public enum Type {
+        CAMP,
+        HOME,
+        WAYPOINT,
+    }
 
-    public TeleportTask(final WaypointsPlugin plugin, final Player player, final Location destination) {
+    private final Player player;
+    private final Traveler traveler;
+    private final int cost;
+    private final Location destination;
+    private final double initialHealth;
+    private final Vector initialPosition;
+    private final NamespacedKey key;
+
+    public TeleportTask(final WaypointsPlugin plugin, final Player player, final Type type,
+            final Location destination) {
         plugin.getTravelerMap().registerTask(player, this);
         final var teleportWaitTime = plugin.getTeleportWaitTime();
         final var period = teleportWaitTime / 20;
         final var taskId = runTaskTimer(plugin, period, period).getTaskId();
         this.player = player;
         this.traveler = plugin.getTravelerMap().getOrCreateTraveler(player);
+        this.cost = switch (type) {
+            case CAMP -> plugin.getCampTeleportCost();
+            case HOME -> plugin.getHomeTeleportCost();
+            case WAYPOINT -> plugin.getWaypointTeleportCost();
+        };
         this.destination = toXZCenterLocation(destination);
         this.initialHealth = player.getHealth();
         this.initialPosition = player.getLocation().toVector();
@@ -45,7 +58,7 @@ public class TeleportTask extends BukkitRunnable {
         if (playerTookDamage() || playerMoved()) {
             cancel();
             removeBossBar(key);
-            player.sendMessage("Teleportation cancelled!");
+            player.sendMessage("Teleportation failed...");
             return;
         }
 
@@ -60,8 +73,8 @@ public class TeleportTask extends BukkitRunnable {
         if (newProgress == 1.0) {
             cancel();
             final var charges = traveler.getCharges();
-            if (charges > 0) {
-                traveler.setCharges(charges - 1);
+            if (charges >= cost) {
+                traveler.setCharges(charges - cost);
                 destination.setDirection(player.getLocation().getDirection());
                 player.teleport(destination);
             } else {

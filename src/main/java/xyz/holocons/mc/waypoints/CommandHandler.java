@@ -143,18 +143,22 @@ public class CommandHandler implements TabExecutor {
 
     private void teleport(Player player, String destination) {
         final var traveler = travelerMap.getOrCreateTraveler(player);
+        final TeleportTask.Type type;
         final Location location;
         if (destination.equalsIgnoreCase("camp")) {
+            type = TeleportTask.Type.CAMP;
             location = traveler.getCamp();
             if (location == null) {
                 player.sendMessage(Component.text("You don't have a camp!"));
             }
         } else if (destination.equalsIgnoreCase("home")) {
+            type = TeleportTask.Type.HOME;
             location = traveler.getHome();
             if (location == null) {
                 player.sendMessage(Component.text("You don't have a home!"));
             }
         } else {
+            type = TeleportTask.Type.WAYPOINT;
             Predicate<Waypoint> matchesDestination = waypoint -> waypoint.getName().equalsIgnoreCase(destination);
             final var waypoint = waypointMap.getNamedWaypoints().filter(matchesDestination).findAny().orElse(null);
             location = traveler.hasWaypoint(waypoint) ? waypoint.getLocation() : null;
@@ -162,7 +166,7 @@ public class CommandHandler implements TabExecutor {
         if (location == null) {
             new Menu(plugin, player, Menu.Type.TELEPORT);
         } else {
-            new TeleportTask(plugin, player, location);
+            new TeleportTask(plugin, player, type, location);
         }
     }
 }

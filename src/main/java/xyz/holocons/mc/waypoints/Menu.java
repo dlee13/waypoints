@@ -21,6 +21,10 @@ public class Menu implements InventoryHolder {
         TELEPORT,
     }
 
+    private static final int HOME_SLOT = 35;
+    private static final int CAMP_SLOT = 44;
+    private static final int INFO_SLOT = 53;
+
     private final Inventory inventory;
     private final NamespacedKey locationKey, pageKey;
     private final WaypointsPlugin plugin;
@@ -82,7 +86,7 @@ public class Menu implements InventoryHolder {
         meta.displayName(Component.text(String.format("Page %d/%d", currentPage + 1, pageCount)));
         meta.getPersistentDataContainer().set(pageKey, PersistentDataType.INTEGER, currentPage);
         item.setItemMeta(meta);
-        inventory.setItem(53, item);
+        inventory.setItem(INFO_SLOT, item);
     }
 
     private void createTeleportPage(int page) {
@@ -118,7 +122,7 @@ public class Menu implements InventoryHolder {
             meta.displayName(Component.text("Home"));
             meta.getPersistentDataContainer().set(locationKey, DataType.LOCATION, home);
             item.setItemMeta(meta);
-            inventory.setItem(35, item);
+            inventory.setItem(HOME_SLOT, item);
         }
         final var camp = traveler.getCamp();
         if (camp != null) {
@@ -127,7 +131,7 @@ public class Menu implements InventoryHolder {
             meta.displayName(Component.text("Camp"));
             meta.getPersistentDataContainer().set(locationKey, DataType.LOCATION, camp);
             item.setItemMeta(meta);
-            inventory.setItem(44, item);
+            inventory.setItem(CAMP_SLOT, item);
         }
         final var item = new ItemStack(Material.ENDER_PEARL);
         final var meta = item.getItemMeta();
@@ -137,16 +141,16 @@ public class Menu implements InventoryHolder {
         final var tokens = Component.text(String.format("%d tokens", traveler.getTokens()));
         meta.lore(List.of(charges, tokens));
         item.setItemMeta(meta);
-        inventory.setItem(53, item);
+        inventory.setItem(INFO_SLOT, item);
     }
 
-    public void handleClick(ItemStack clickedItem) {
+    public void handleClick(ItemStack clickedItem, int slot) {
         switch (type) {
             case EDIT -> {
                 final var location = clickedItem.getItemMeta().getPersistentDataContainer()
                         .get(locationKey, DataType.LOCATION);
                 if (location == null) {
-                    final var currentPage = inventory.getItem(53).getItemMeta().getPersistentDataContainer()
+                    final var currentPage = inventory.getItem(INFO_SLOT).getItemMeta().getPersistentDataContainer()
                             .get(pageKey, PersistentDataType.INTEGER);
                     createEditPage(currentPage + 1);
                     return;
@@ -158,12 +162,17 @@ public class Menu implements InventoryHolder {
                 final var location = clickedItem.getItemMeta().getPersistentDataContainer()
                         .get(locationKey, DataType.LOCATION);
                 if (location == null) {
-                    final var currentPage = inventory.getItem(53).getItemMeta().getPersistentDataContainer()
+                    final var currentPage = inventory.getItem(INFO_SLOT).getItemMeta().getPersistentDataContainer()
                             .get(pageKey, PersistentDataType.INTEGER);
                     createTeleportPage(currentPage + 1);
                     return;
                 }
-                new TeleportTask(plugin, player, location);
+                final var teleportType = switch (slot) {
+                    case HOME_SLOT -> TeleportTask.Type.HOME;
+                    case CAMP_SLOT -> TeleportTask.Type.CAMP;
+                    default -> TeleportTask.Type.WAYPOINT;
+                };
+                new TeleportTask(plugin, player, teleportType, location);
                 inventory.close();
             }
             default -> {
