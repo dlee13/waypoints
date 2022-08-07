@@ -101,7 +101,9 @@ public class Waypoint {
         var itemStack = getBannerItem(location);
         var itemMeta = itemStack.getItemMeta();
         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
-        itemMeta.displayName(itemMeta.displayName().decoration(TextDecoration.ITALIC, false));
+        if (itemMeta.hasDisplayName()) {
+            itemMeta.displayName(itemMeta.displayName().decoration(TextDecoration.ITALIC, false));
+        }
         var vectorComponent = Component.text()
             .color(NamedTextColor.GRAY)
             .append(Component.text(location.getBlockX()))
