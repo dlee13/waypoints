@@ -13,7 +13,7 @@ commands:
     usage: /waypoints [addtoken | create | removetoken | setcamp | sethome | teleport]
     permission: waypoints.player
   editwaypoints:
-    usage: /editwaypoints [activate | delete | menu]
+    usage: /editwaypoints [activate | delete | menu | unsetcamps | unsethomes]
     permission: waypoints.staff
 
 permissions:

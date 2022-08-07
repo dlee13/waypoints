@@ -129,7 +129,7 @@ public class CommandHandler implements TabExecutor {
                 case "EDITWAYPOINTS" -> {
                     yield switch (args.length) {
                         case 1 -> {
-                            yield List.of("activate", "delete", "menu");
+                            yield List.of("activate", "delete", "menu", "unsetcamps", "unsethomes");
                         }
                         default -> List.of();
                     };
