@@ -81,7 +81,7 @@ public final class EventListener implements Listener {
 
     private boolean isValidWaypointPlacement(Block blockPlaced, Block blockAgainst) {
         return blockAgainst.getFace(blockPlaced) == BlockFace.UP
-            && plugin.getHomeWorlds().contains(blockPlaced.getWorld().getName());
+            && plugin.getWaypointWorlds().contains(blockPlaced.getWorld().getName());
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = false)
