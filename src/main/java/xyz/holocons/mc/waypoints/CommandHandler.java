@@ -88,7 +88,7 @@ public class CommandHandler implements TabExecutor {
                     plugin.loadData();
                 }
                 case "RELOAD" -> {
-                    plugin.reloadConfig();
+                    plugin.loadConfig();
                 }
                 case "SAVE" -> {
                     plugin.saveData();

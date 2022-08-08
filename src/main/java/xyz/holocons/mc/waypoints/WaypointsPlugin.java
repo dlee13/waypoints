@@ -21,7 +21,7 @@ public final class WaypointsPlugin extends JavaPlugin {
     @Override
     public void onLoad() {
         saveDefaultConfig();
-        config = getConfig();
+        loadConfig();
         hologramMap = new HologramMap();
         travelerMap = new TravelerMap();
         waypointMap = new WaypointMap();
@@ -40,6 +40,12 @@ public final class WaypointsPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         saveData();
+    }
+
+    public void loadConfig() {
+        reloadConfig();
+        config = getConfig();
+        getLogger().info("Config loaded");
     }
 
     public void backupData() {
@@ -63,7 +69,7 @@ public final class WaypointsPlugin extends JavaPlugin {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        getLogger().info("Loaded");
+        getLogger().info("Data loaded");
     }
 
     public void saveData() {
@@ -73,7 +79,7 @@ public final class WaypointsPlugin extends JavaPlugin {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-        getLogger().info("Saved");
+        getLogger().info("Data saved");
     }
 
     public int getMaxCharges() {
