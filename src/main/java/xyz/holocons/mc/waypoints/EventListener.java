@@ -129,20 +129,20 @@ public final class EventListener implements Listener {
         final var task = travelerMap.getTask(player, TravelerTask.class);
 
         if (!waypointMap.isWaypoint(clickedBlock)) {
-            final var blockAbove = clickedBlock.getRelative(BlockFace.UP);
-            if (task == null || !blockAbove.isPassable()) {
+            final var destinationBlock = clickedBlock.isPassable() ? clickedBlock : clickedBlock.getRelative(BlockFace.UP);
+            if (task == null || !destinationBlock.isPassable()) {
                 return;
             }
             switch (task.getType()) {
                 case SETCAMP -> {
-                    if (plugin.getCampWorlds().contains(blockAbove.getWorld().getName())) {
-                        travelerMap.getOrCreateTraveler(player).setCamp(blockAbove.getLocation());
+                    if (plugin.getCampWorlds().contains(destinationBlock.getWorld().getName())) {
+                        travelerMap.getOrCreateTraveler(player).setCamp(destinationBlock.getLocation());
                         player.sendMessage(Component.text("You assigned your camp!", NamedTextColor.GREEN));
                     }
                 }
                 case SETHOME -> {
-                    if (plugin.getHomeWorlds().contains(blockAbove.getWorld().getName())) {
-                        travelerMap.getOrCreateTraveler(player).setHome(blockAbove.getLocation());
+                    if (plugin.getHomeWorlds().contains(destinationBlock.getWorld().getName())) {
+                        travelerMap.getOrCreateTraveler(player).setHome(destinationBlock.getLocation());
                         player.sendMessage(Component.text("You assigned your home!", NamedTextColor.GREEN));
                     }
                 }
