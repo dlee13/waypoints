@@ -39,7 +39,7 @@ public class Waypoint {
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.STRIPE_MIDDLE));
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.STRIPE_BOTTOM));
         bannerMeta.addPattern(new Pattern(DyeColor.WHITE, PatternType.BORDER));
-        bannerMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        bannerMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ITEM_SPECIFICS);
         bannerMeta.displayName(UNNAMED_WAYPOINT_COMPONENT);
         MISSING_BANNER_ITEMSTACK.setItemMeta(bannerMeta);
     }
@@ -100,7 +100,7 @@ public class Waypoint {
     private static ItemStack getDisplayItem(Location location) {
         var itemStack = getBannerItem(location);
         var itemMeta = itemStack.getItemMeta();
-        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_POTION_EFFECTS);
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ITEM_SPECIFICS);
         if (itemMeta.hasDisplayName()) {
             itemMeta.displayName(itemMeta.displayName().decoration(TextDecoration.ITALIC, false));
         }

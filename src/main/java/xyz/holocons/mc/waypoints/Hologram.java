@@ -10,10 +10,11 @@ import org.bukkit.util.Vector;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 
 import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 public record Hologram(long chunkKey, UUID uniqueId) {
@@ -24,7 +25,7 @@ public record Hologram(long chunkKey, UUID uniqueId) {
 
     private static final Vector HOLOGRAM_POSITION_OFFSET = new Vector(0.5, 1.6, 0.5);
 
-    // https://nms.screamingsandals.org/1.19/net/minecraft/network/protocol/game/ClientboundAddEntityPacket.html
+    // https://nms.screamingsandals.org/1.19.3/net/minecraft/network/protocol/game/ClientboundAddEntityPacket.html
     // https://wiki.vg/Protocol#Spawn_Entity
     public static PacketContainer getSpawnPacket(int entityId, UUID uniqueId, Waypoint waypoint) {
         var location = waypoint.getLocation().add(HOLOGRAM_POSITION_OFFSET);
@@ -50,26 +51,25 @@ public record Hologram(long chunkKey, UUID uniqueId) {
         return packet;
     }
 
-    // https://nms.screamingsandals.org/1.19/net/minecraft/network/protocol/game/ClientboundSetEntityDataPacket.html
+    // https://nms.screamingsandals.org/1.19.3/net/minecraft/network/protocol/game/ClientboundSetEntityDataPacket.html
     // https://wiki.vg/Protocol#Set_Entity_Metadata
     // https://wiki.vg/Entity_metadata#Entity_Metadata_Format
     public static PacketContainer getMetadataPacket(int entityId, Waypoint waypoint) {
         var name = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(waypoint.getDisplayName()));
-        var watcher = new WrappedDataWatcher();
-        watcher.setObject(0, Registry.get(Byte.class), (byte) 0x20, true);
-        watcher.setObject(2, Registry.getChatComponentSerializer(true), Optional.of(name.getHandle()), true);
-        watcher.setObject(3, Registry.get(Boolean.class), true, true);
-        watcher.setObject(15, Registry.get(Byte.class), (byte) (0x08 | 0x10), true);
-        var metadata = watcher.getWatchableObjects();
+        var metadata = ObjectList.of(
+                new WrappedDataValue(0, Registry.get(Byte.class), (byte) 0x20),
+                new WrappedDataValue(2, Registry.getChatComponentSerializer(true), Optional.of(name.getHandle())),
+                new WrappedDataValue(3, Registry.get(Boolean.class), true),
+                new WrappedDataValue(15, Registry.get(Byte.class), (byte) (0x08 | 0x10)));
         var packet = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         packet.getIntegers()
                 .write(0, entityId); // id
-        packet.getWatchableCollectionModifier()
+        packet.getDataValueCollectionModifier()
                 .write(0, metadata); // packedItems
         return packet;
     }
 
-    // https://nms.screamingsandals.org/1.19/net/minecraft/network/protocol/game/ClientboundRemoveEntitiesPacket.html
+    // https://nms.screamingsandals.org/1.19.3/net/minecraft/network/protocol/game/ClientboundRemoveEntitiesPacket.html
     // https://wiki.vg/Protocol#Remove_Entities
     public static PacketContainer getDestroyPacket(int... entityId) {
         var entityIds = IntList.of(entityId);
