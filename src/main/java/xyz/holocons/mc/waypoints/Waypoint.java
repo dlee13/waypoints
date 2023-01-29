@@ -85,7 +85,10 @@ public class Waypoint {
     }
 
     public List<String> getContributorNames() {
-        return contributors.stream().map(uniqueId -> Bukkit.getPlayer(uniqueId).getName()).toList();
+        return contributors.stream().map(uniqueId -> {
+            final var player = Bukkit.getPlayer(uniqueId);
+            return player != null ? player.getName() : uniqueId.toString();
+        }).toList();
     }
 
     private static ItemStack getBannerItem(Location location) {
@@ -104,14 +107,9 @@ public class Waypoint {
         if (itemMeta.hasDisplayName()) {
             itemMeta.displayName(itemMeta.displayName().decoration(TextDecoration.ITALIC, false));
         }
-        var vectorComponent = Component.text()
-            .color(NamedTextColor.GRAY)
-            .append(Component.text(location.getBlockX()))
-            .append(Component.space())
-            .append(Component.text(location.getBlockY()))
-            .append(Component.space())
-            .append(Component.text(location.getBlockZ()))
-            .build();
+        var vectorComponent = Component.text(
+                String.format("%d %d %d", location.getBlockX(), location.getBlockY(), location.getBlockZ()),
+                NamedTextColor.GRAY);
         var worldComponent = Component.text(location.getWorld().getName(), NamedTextColor.GRAY);
         itemMeta.lore(List.of(vectorComponent, worldComponent));
         itemStack.setItemMeta(itemMeta);
