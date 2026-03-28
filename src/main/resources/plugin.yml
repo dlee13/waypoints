@@ -1,8 +1,8 @@
 main: ${main}
 name: ${name}
-version: ${version}
+version: '${version}'
 description: ${description}
-api-version: ${apiVersion}
+api-version: '${apiVersion}'
 authors: ${authors}
 website: ${website}
 depend: ${depend}

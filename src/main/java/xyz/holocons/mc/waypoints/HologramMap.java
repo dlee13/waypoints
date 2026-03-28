@@ -99,7 +99,7 @@ public class HologramMap {
     }
 
     private static Collection<Player> getTrackedPlayers(Player player) {
-        final var players = player.getTrackedPlayers();
+        final var players = player.getTrackedBy();
         players.add(player);
         return players;
     }
